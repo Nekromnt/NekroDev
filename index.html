@@ -1,0 +1,2422 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Anton Webcoder | Websites, support, fixes</title>
+<meta name="description" content="Anton Webcoder builds websites for business ideas, project launches, maintenance, fixes, audits, and premium digital experiences in any style.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="18" fill="%23070a0f"/><path d="M32 10l18 44h-9l-3.5-9h-11L23 54h-9l18-44zm0 15l-3.4 11h6.8L32 25z" fill="%23f7fbff"/></svg>'>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#070a0f;
+  --bg2:#10141c;
+  --panel:#121821;
+  --panel2:#18202b;
+  --text:#f8fbff;
+  --muted:#9aa7b5;
+  --soft:#d4dde7;
+  --line:rgba(235,243,252,.14);
+  --line2:rgba(235,243,252,.28);
+  --accent:#e9f3ff;
+  --accent2:#9fc7ff;
+  --green:#a8f1d2;
+  --rose:#f2a6be;
+  --gold:#e6c985;
+  --ink:#070a0f;
+  --glass:rgba(255,255,255,.075);
+  --shadow:rgba(0,0,0,.48);
+  --ease:cubic-bezier(.65,0,.14,1);
+  --spring:cubic-bezier(.18,.98,.32,1);
+  --font:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg:#f3f6fa;
+  --bg2:#ffffff;
+  --panel:#ffffff;
+  --panel2:#edf2f8;
+  --text:#0e1520;
+  --muted:#657486;
+  --soft:#344153;
+  --line:rgba(14,26,42,.13);
+  --line2:rgba(14,26,42,.25);
+  --shadow:rgba(41,62,89,.18);
+  --glass:rgba(255,255,255,.68);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
+  cursor:none;
+  background:
+    radial-gradient(circle at 16% 10%, color-mix(in srgb,var(--accent2) 20%, transparent), transparent 32rem),
+    radial-gradient(circle at 86% 16%, color-mix(in srgb,var(--green) 12%, transparent), transparent 34rem),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+  color:var(--text);
+  font-family:var(--font);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+  transition:background 780ms var(--ease),color 780ms var(--ease);
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-3;
+  pointer-events:none;
+  background:
+    radial-gradient(ellipse at 50% -10%, rgba(255,255,255,.12), transparent 44%),
+    linear-gradient(115deg, transparent 0 30%, rgba(255,255,255,.035) 44%, transparent 62% 100%);
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 50% 18%, transparent 50%, rgba(0,0,0,.34));
+}
+button,input,textarea,select{font:inherit}
+a{color:inherit;text-decoration:none}
+button,a{cursor:none}
+::selection{background:rgba(159,199,255,.3)}
+.loader{
+  position:fixed;
+  inset:0;
+  z-index:90;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#05070b,#121821);
+  transition:opacity 720ms var(--ease),visibility 720ms var(--ease),transform 820ms var(--ease);
+}
+.loader.is-hidden{opacity:0;visibility:hidden;transform:translateY(-4%)}
+.loader-inner{
+  width:min(82vw,500px);
+  display:grid;
+  justify-items:center;
+  gap:20px;
+  text-align:center;
+}
+.loader-mark{
+  width:86px;
+  height:86px;
+  border-radius:28px;
+  display:grid;
+  place-items:center;
+  border:1px solid rgba(255,255,255,.18);
+  background:linear-gradient(145deg,rgba(255,255,255,.2),rgba(255,255,255,.04));
+  box-shadow:0 34px 90px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.24);
+  overflow:hidden;
+  position:relative;
+  font-size:42px;
+  font-weight:950;
+}
+.loader-mark::after{
+  content:"";
+  position:absolute;
+  inset:-45%;
+  background:linear-gradient(105deg,transparent 34%,rgba(255,255,255,.58),transparent 62%);
+  animation:sheen 1600ms var(--ease) infinite;
+}
+.loader h1{
+  margin:0;
+  font-size:clamp(38px,8vw,78px);
+  line-height:.9;
+}
+.loader p{margin:0;color:rgba(255,255,255,.62);line-height:1.55}
+.load-track{
+  width:min(360px,72vw);
+  height:5px;
+  border-radius:999px;
+  background:rgba(255,255,255,.1);
+  overflow:hidden;
+}
+.load-track span{
+  display:block;
+  height:100%;
+  width:36%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#9fc7ff,#f8fbff,#a8f1d2);
+  animation:load 1450ms var(--ease) infinite;
+}
+#cursorCanvas{
+  position:fixed;
+  inset:0;
+  z-index:100;
+  pointer-events:none;
+}
+.cursor-dot{
+  position:fixed;
+  left:0;
+  top:0;
+  width:10px;
+  height:10px;
+  z-index:101;
+  pointer-events:none;
+  border-radius:50%;
+  background:var(--text);
+  mix-blend-mode:difference;
+  transform:translate3d(-40px,-40px,0);
+  transition:width 180ms ease,height 180ms ease,opacity 180ms ease;
+}
+.cursor-dot.is-pressing{width:7px;height:7px}
+.topbar{
+  position:fixed;
+  left:clamp(14px,3vw,42px);
+  right:clamp(14px,3vw,42px);
+  top:16px;
+  z-index:42;
+  min-height:66px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  padding:10px 10px 10px 14px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:color-mix(in srgb,var(--glass) 92%, transparent);
+  backdrop-filter:blur(26px) saturate(1.35);
+  box-shadow:0 20px 70px var(--shadow), inset 0 1px 0 rgba(255,255,255,.18);
+}
+.brand{
+  display:flex;
+  align-items:center;
+  gap:11px;
+  min-width:0;
+}
+.brand-mark,.reactive{
+  --rx:50%;
+  --ry:50%;
+  --shine:0;
+  --tiltX:0deg;
+  --tiltY:0deg;
+  position:relative;
+  overflow:hidden;
+  isolation:isolate;
+  transform:perspective(700px) rotateX(var(--tiltX)) rotateY(var(--tiltY)) translateZ(0);
+  transition:transform 240ms var(--spring),border-color 240ms ease,box-shadow 240ms ease;
+}
+.brand-mark{
+  width:42px;
+  height:42px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  border:1px solid var(--line2);
+  background:linear-gradient(145deg,rgba(255,255,255,.22),rgba(255,255,255,.06));
+  box-shadow:0 14px 36px rgba(0,0,0,.2), inset 0 1px 0 rgba(255,255,255,.25);
+  font-weight:950;
+}
+.brand-mark::before,.reactive::before,.project-card::before,.service::before,.metric::before,.profile-card::before{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  z-index:-1;
+  background:
+    radial-gradient(circle at var(--rx) var(--ry), rgba(255,255,255,calc(.1 + var(--shine)*.36)), transparent 34%),
+    linear-gradient(125deg, transparent 20%, rgba(255,255,255,calc(.04 + var(--shine)*.26)), transparent 58%);
+  opacity:calc(.42 + var(--shine)*.58);
+  transition:opacity 200ms ease;
+}
+.brand-copy strong{
+  display:block;
+  font-size:13px;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+.brand-copy span{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+}
+.nav{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.nav a,.btn,.icon-btn,.filter,.case-link,.copy-btn{
+  border:1px solid var(--line);
+  color:var(--text);
+  background:rgba(255,255,255,.075);
+  backdrop-filter:blur(18px) saturate(1.2);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.13);
+  transition:transform 240ms var(--spring),border-color 240ms ease,box-shadow 240ms ease,background 240ms ease,color 240ms ease;
+}
+.nav a{
+  display:inline-flex;
+  align-items:center;
+  min-height:40px;
+  padding:0 14px;
+  border-radius:999px;
+  color:var(--soft);
+  font-size:13px;
+}
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:9px;
+  min-height:44px;
+  padding:0 16px;
+  border-radius:999px;
+  font-weight:850;
+  white-space:nowrap;
+}
+.btn.primary,.case-link.primary{
+  color:#07101a;
+  background:linear-gradient(135deg,#f8fbff,#9fc7ff);
+  border-color:rgba(255,255,255,.42);
+}
+.btn:hover,.nav a:hover,.icon-btn:hover,.filter:hover,.case-link:hover,.copy-btn:hover{
+  transform:translateY(-2px);
+  border-color:var(--line2);
+  box-shadow:0 16px 42px var(--shadow), inset 0 1px 0 rgba(255,255,255,.22);
+}
+.btn:active,.nav a:active,.icon-btn:active,.filter:active,.case-link:active,.copy-btn:active{transform:translateY(0) scale(.98)}
+.icon-btn{
+  width:44px;
+  height:44px;
+  border-radius:16px;
+  display:grid;
+  place-items:center;
+}
+.theme-glyph{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:2px solid currentColor;
+  background:linear-gradient(90deg,currentColor 0 50%,transparent 50%);
+}
+.menu-lines{
+  width:18px;
+  height:13px;
+  display:grid;
+  gap:4px;
+}
+.menu-lines i{
+  display:block;
+  height:2px;
+  border-radius:999px;
+  background:currentColor;
+}
+.menu-btn{display:none}
+.hero{
+  min-height:100dvh;
+  display:grid;
+  grid-template-columns:minmax(280px,.9fr) minmax(340px,1.1fr);
+  align-items:center;
+  gap:clamp(26px,5vw,74px);
+  padding:106px clamp(18px,4vw,56px) 48px;
+}
+.hero h1{
+  margin:0;
+  max-width:9ch;
+  font-size:clamp(62px,9vw,132px);
+  line-height:.84;
+  letter-spacing:0;
+}
+.hero h1 span{
+  display:block;
+  color:transparent;
+  background:linear-gradient(92deg,#f8fbff,#9fc7ff 52%,#a8f1d2);
+  background-clip:text;
+  -webkit-background-clip:text;
+}
+.hero p{
+  max-width:33rem;
+  margin:24px 0 0;
+  color:var(--muted);
+  font-size:clamp(16px,2vw,19px);
+  line-height:1.6;
+}
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:28px;
+}
+.profile-stage{
+  position:relative;
+  min-height:660px;
+  display:grid;
+  place-items:center;
+}
+.profile-card{
+  --rx:50%;
+  --ry:50%;
+  --shine:0;
+  position:relative;
+  overflow:hidden;
+  width:min(100%,720px);
+  border:1px solid var(--line);
+  border-radius:34px;
+  padding:20px;
+  background:rgba(255,255,255,.055);
+  backdrop-filter:blur(26px) saturate(1.25);
+  box-shadow:0 46px 130px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.profile-top{
+  min-height:330px;
+  display:grid;
+  grid-template-columns:.9fr 1.1fr;
+  gap:14px;
+}
+.avatar-panel{
+  position:relative;
+  min-height:310px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 34% 28%, rgba(255,255,255,.7), transparent 12%),
+    radial-gradient(circle at 50% 50%, color-mix(in srgb,var(--accent2) 48%, transparent), transparent 36%),
+    linear-gradient(145deg,#17202b,#070a0f);
+}
+.avatar-panel::before{
+  content:"A";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  font-size:clamp(120px,18vw,220px);
+  font-weight:950;
+  color:rgba(255,255,255,.9);
+}
+.avatar-panel::after{
+  content:"";
+  position:absolute;
+  inset:auto 14px 14px;
+  height:72px;
+  border-radius:22px;
+  background:rgba(255,255,255,.08);
+  border:1px solid rgba(255,255,255,.18);
+  backdrop-filter:blur(20px);
+}
+.profile-copy{
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:22px;
+  background:rgba(255,255,255,.052);
+}
+.profile-copy h2{
+  margin:0;
+  font-size:clamp(34px,5vw,62px);
+  line-height:.94;
+}
+.profile-copy p{
+  margin:16px 0 0;
+  color:var(--muted);
+  line-height:1.6;
+}
+.profile-points{
+  display:grid;
+  gap:10px;
+  margin-top:22px;
+}
+.point{
+  display:flex;
+  justify-content:space-between;
+  gap:14px;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.045);
+}
+.point strong{font-size:13px}
+.point span{font-size:13px;color:var(--muted);text-align:right}
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-top:14px;
+}
+.metric{
+  --rx:50%;
+  --ry:50%;
+  --shine:0;
+  position:relative;
+  overflow:hidden;
+  min-height:116px;
+  padding:18px;
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:rgba(255,255,255,.05);
+}
+.metric strong{display:block;font-size:32px;line-height:1}
+.metric span{display:block;margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}
+.shell{
+  max-width:1380px;
+  margin:0 auto;
+  padding:0 clamp(18px,4vw,56px);
+}
+.section{
+  padding:70px 0;
+}
+.section-head{
+  max-width:760px;
+}
+.section-head h2{
+  margin:0;
+  font-size:clamp(42px,6vw,86px);
+  line-height:.94;
+}
+.section-head p{
+  margin:18px 0 0;
+  color:var(--muted);
+  line-height:1.65;
+  font-size:17px;
+}
+.filters{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:30px 0 22px;
+}
+.filter{
+  min-height:40px;
+  padding:0 14px;
+  border-radius:999px;
+  color:var(--soft);
+}
+.filter.active{
+  color:#07101a;
+  background:linear-gradient(135deg,#f8fbff,#9fc7ff);
+  font-weight:850;
+}
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:16px;
+}
+.project-card{
+  --rx:50%;
+  --ry:50%;
+  --shine:0;
+  position:relative;
+  overflow:hidden;
+  min-height:520px;
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:14px;
+  background:rgba(255,255,255,.055);
+  backdrop-filter:blur(24px);
+  box-shadow:0 26px 84px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.project-media{
+  height:300px;
+  overflow:hidden;
+  border-radius:24px;
+  border:1px solid var(--line);
+  background:#10151c;
+}
+.project-media img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+  transition:transform 800ms var(--ease),filter 800ms var(--ease);
+}
+.project-card:hover .project-media img{transform:scale(1.04);filter:saturate(1.04)}
+.project-body{
+  padding:18px 4px 2px;
+}
+.project-body h3{
+  margin:0;
+  font-size:28px;
+  line-height:1;
+}
+.project-body p{
+  min-height:50px;
+  margin:12px 0 0;
+  color:var(--muted);
+  line-height:1.55;
+}
+.tag-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:16px;
+}
+.tag{
+  display:inline-flex;
+  min-height:28px;
+  align-items:center;
+  padding:0 10px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--soft);
+  font-size:12px;
+  background:rgba(255,255,255,.045);
+}
+.project-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:18px;
+}
+.case-link,.copy-btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:40px;
+  padding:0 13px;
+  border-radius:999px;
+  font-size:13px;
+  font-weight:850;
+}
+.services-grid{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:16px;
+}
+.service{
+  --rx:50%;
+  --ry:50%;
+  --shine:0;
+  position:relative;
+  overflow:hidden;
+  min-height:260px;
+  border:1px solid var(--line);
+  border-radius:30px;
+  padding:28px;
+  background:rgba(255,255,255,.055);
+  backdrop-filter:blur(24px);
+  box-shadow:0 24px 78px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.14);
+}
+.service.big{min-height:536px}
+.service h3{
+  margin:0;
+  max-width:12ch;
+  font-size:clamp(32px,5vw,64px);
+  line-height:.95;
+}
+.service p{
+  max-width:38rem;
+  margin:18px 0 0;
+  color:var(--muted);
+  line-height:1.65;
+}
+.service-list{
+  display:grid;
+  gap:10px;
+  margin-top:28px;
+}
+.service-row{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.045);
+}
+.service-row span{color:var(--muted);text-align:right}
+.process{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-top:30px;
+}
+.process-step{
+  min-height:210px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:rgba(255,255,255,.05);
+}
+.process-step strong{
+  display:block;
+  font-size:20px;
+}
+.process-step p{
+  color:var(--muted);
+  line-height:1.55;
+}
+.faq{
+  display:grid;
+  gap:10px;
+  margin-top:30px;
+}
+.faq details{
+  border:1px solid var(--line);
+  border-radius:22px;
+  background:rgba(255,255,255,.052);
+  overflow:hidden;
+}
+.faq summary{
+  min-height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 18px;
+  font-weight:850;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq p{
+  margin:0;
+  padding:0 18px 18px;
+  color:var(--muted);
+  line-height:1.6;
+}
+.cta{
+  padding:70px clamp(18px,4vw,56px) 90px;
+}
+.cta-inner{
+  min-height:460px;
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  align-items:end;
+  gap:22px;
+  border:1px solid var(--line);
+  border-radius:34px;
+  padding:clamp(24px,5vw,52px);
+  background:
+    radial-gradient(circle at 74% 20%, color-mix(in srgb,var(--accent2) 18%, transparent), transparent 24rem),
+    rgba(255,255,255,.055);
+  backdrop-filter:blur(24px);
+  box-shadow:0 34px 110px rgba(0,0,0,.22), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.cta h2{
+  margin:0;
+  max-width:11ch;
+  font-size:clamp(46px,7vw,96px);
+  line-height:.9;
+}
+.cta p{
+  max-width:33rem;
+  margin:20px 0 0;
+  color:var(--muted);
+  line-height:1.65;
+}
+.contact-panel{
+  border:1px solid var(--line);
+  border-radius:26px;
+  padding:18px;
+  background:rgba(255,255,255,.052);
+}
+.contact-panel h3{margin:0;font-size:24px}
+.contact-panel p{margin:12px 0 0}
+.contact-actions{
+  display:grid;
+  gap:10px;
+  margin-top:18px;
+}
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:80;
+  display:grid;
+  place-items:center;
+  padding:22px;
+  opacity:0;
+  pointer-events:none;
+  background:rgba(4,6,10,.6);
+  backdrop-filter:blur(16px);
+  transition:opacity 280ms ease;
+}
+.modal.open{opacity:1;pointer-events:auto}
+.modal-card{
+  width:min(94vw,760px);
+  max-height:90dvh;
+  overflow:auto;
+  border:1px solid var(--line2);
+  border-radius:30px;
+  background:linear-gradient(145deg,color-mix(in srgb,var(--panel) 96%, transparent),color-mix(in srgb,var(--panel2) 94%, transparent));
+  box-shadow:0 52px 150px rgba(0,0,0,.48), inset 0 1px 0 rgba(255,255,255,.18);
+  padding:20px;
+  transform:translateY(16px) scale(.97);
+  transition:transform 360ms var(--spring);
+}
+.modal.open .modal-card{transform:translateY(0) scale(1)}
+.modal-head{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.modal-head h2{margin:0;font-size:32px;line-height:1}
+.modal-head p{margin:9px 0 0;color:var(--muted);line-height:1.5}
+.close{
+  width:42px;
+  height:42px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  color:var(--text);
+  background:rgba(255,255,255,.07);
+}
+.case-modal-grid{
+  display:grid;
+  grid-template-columns:.96fr 1.04fr;
+  gap:18px;
+  margin-top:18px;
+}
+.case-modal-grid img{
+  width:100%;
+  height:360px;
+  object-fit:cover;
+  border:1px solid var(--line);
+  border-radius:22px;
+}
+.case-copy h3{margin:0;font-size:34px;line-height:1}
+.case-copy p{color:var(--muted);line-height:1.6}
+.case-stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:18px 0;
+}
+.case-stat{
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  background:rgba(255,255,255,.052);
+}
+.case-stat strong{display:block}
+.case-stat span{display:block;margin-top:6px;color:var(--muted);font-size:12px}
+form{
+  display:grid;
+  gap:12px;
+  margin-top:18px;
+}
+.field-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+}
+label{
+  display:grid;
+  gap:7px;
+  color:var(--muted);
+  font-size:12px;
+}
+input,textarea,select{
+  width:100%;
+  min-height:48px;
+  padding:0 14px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  color:var(--text);
+  background:rgba(255,255,255,.07);
+  outline:none;
+}
+textarea{
+  min-height:116px;
+  resize:vertical;
+  padding-top:13px;
+}
+input:focus,textarea:focus,select:focus{
+  border-color:var(--line2);
+  box-shadow:0 0 0 4px rgba(159,199,255,.16);
+}
+.mobile-menu{
+  position:fixed;
+  inset:88px 14px auto;
+  z-index:41;
+  display:none;
+  padding:12px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:color-mix(in srgb,var(--panel) 88%, transparent);
+  backdrop-filter:blur(24px);
+  box-shadow:0 30px 100px var(--shadow);
+}
+.mobile-menu.open{display:grid;gap:8px}
+.mobile-menu a,.mobile-menu button{
+  min-height:48px;
+  border:1px solid var(--line);
+  border-radius:18px;
+  color:var(--text);
+  background:rgba(255,255,255,.06);
+}
+.toast{
+  position:fixed;
+  left:50%;
+  bottom:22px;
+  z-index:110;
+  transform:translate(-50%,18px);
+  opacity:0;
+  pointer-events:none;
+  padding:13px 16px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--text);
+  background:rgba(10,14,19,.8);
+  backdrop-filter:blur(18px);
+  transition:opacity 260ms ease,transform 260ms var(--spring);
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.reveal{
+  opacity:1;
+  transform:translateY(0);
+  transition:opacity 500ms var(--ease),transform 500ms var(--ease);
+}
+.reveal.in{opacity:1;transform:translateY(0)}
+@keyframes sheen{0%{transform:translateX(-72%) rotate(12deg)}100%{transform:translateX(72%) rotate(12deg)}}
+@keyframes load{0%{transform:translateX(-130%);width:30%}55%{width:72%}100%{transform:translateX(330%);width:22%}}
+@media (max-width:1120px){
+  .hero{grid-template-columns:1fr;min-height:auto}
+  .profile-stage{min-height:auto}
+  .services-grid,.cta-inner{grid-template-columns:1fr}
+  .process{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  body{cursor:auto}
+  button,a{cursor:pointer}
+  #cursorCanvas,.cursor-dot{display:none}
+  .topbar{left:12px;right:12px;top:12px}
+  .nav a,.nav .contact-nav{display:none}
+  .menu-btn{display:grid}
+  .brand-copy span{display:none}
+  .hero{padding:96px 14px 42px}
+  .hero h1{font-size:clamp(54px,17vw,88px)}
+  .profile-top,.projects-grid,.case-modal-grid,.field-grid{grid-template-columns:1fr}
+  .metrics{grid-template-columns:1fr}
+  .shell{padding:0 14px}
+  .section{padding:50px 0}
+  .project-card{min-height:auto}
+  .project-media{height:250px}
+  .service.big{min-height:auto}
+  .case-modal-grid img{height:260px}
+}
+@media (max-width:520px){
+  .brand-mark{width:40px;height:40px}
+  .brand-copy strong{font-size:12px}
+  .btn{padding:0 13px}
+  .btn .hide-sm{display:none}
+  .hero-actions{display:grid;grid-template-columns:1fr}
+  .process{grid-template-columns:1fr}
+  .profile-card{padding:12px;border-radius:26px}
+  .profile-copy,.avatar-panel{border-radius:22px}
+  .project-actions{display:grid;grid-template-columns:1fr}
+  .case-link,.copy-btn{width:100%}
+  .cta{padding:46px 14px 70px}
+  .cta-inner{padding:22px;border-radius:26px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+
+/* Diversification pass: editorial portfolio index, distinct from the glass-heavy case studies. */
+:root{
+  --editorial-accent:#245cff;
+  --editorial-paper:#f4f6f8;
+  --editorial-ink:#0b1119;
+  --editorial-rule:rgba(11,17,25,.16);
+}
+[data-theme="light"]{
+  --bg:#f4f6f8;
+  --bg2:#ffffff;
+  --panel:#ffffff;
+  --panel2:#e8edf3;
+  --text:#0b1119;
+  --muted:#637082;
+  --soft:#1d2836;
+  --line:rgba(11,17,25,.14);
+  --line2:rgba(11,17,25,.28);
+  --accent:#245cff;
+  --accent2:#245cff;
+  --green:#245cff;
+  --glass:rgba(255,255,255,.82);
+  --shadow:rgba(30,45,66,.12);
+}
+[data-theme="dark"]{
+  --bg:#090b10;
+  --bg2:#11151b;
+  --panel:#10151c;
+  --panel2:#161c25;
+  --text:#f6f8fb;
+  --muted:#9ca7b6;
+  --soft:#d8e1ec;
+  --line:rgba(238,244,252,.14);
+  --line2:rgba(238,244,252,.28);
+  --accent:#8db2ff;
+  --accent2:#8db2ff;
+  --green:#8db2ff;
+  --glass:rgba(12,16,23,.78);
+  --shadow:rgba(0,0,0,.36);
+}
+body{
+  background:linear-gradient(135deg,var(--bg),var(--bg2));
+}
+body::before{
+  display:none;
+  background:none;
+  opacity:0;
+}
+body::after{
+  display:none;
+  background:none;
+}
+.topbar{
+  min-height:62px;
+  border-radius:14px;
+  padding:8px 8px 8px 12px;
+  border-color:var(--line2);
+  background:color-mix(in srgb,var(--panel) 88%, transparent);
+  box-shadow:0 12px 36px var(--shadow), inset 0 1px 0 rgba(255,255,255,.16);
+}
+.brand-mark,.icon-btn{
+  border-radius:10px;
+}
+.brand-copy strong{
+  letter-spacing:.08em;
+}
+.nav a,.btn,.filter,.case-link,.copy-btn{
+  border-radius:10px;
+}
+.btn.primary,.case-link.primary,.filter.active{
+  background:var(--accent);
+  border-color:var(--accent);
+  color:#fff;
+  box-shadow:none;
+}
+.hero{
+  grid-template-columns:1.05fr .95fr;
+  padding-top:110px;
+}
+.hero h1{
+  max-width:10ch;
+  font-size:clamp(66px,10vw,150px);
+  line-height:.82;
+  font-weight:950;
+}
+.hero h1 span{
+  color:var(--accent);
+  background:none;
+  -webkit-background-clip:initial;
+  background-clip:initial;
+}
+.hero p{
+  max-width:30rem;
+  font-size:18px;
+}
+.profile-card,.project-card,.service,.cta-inner,.modal-card{
+  border-radius:18px;
+  background:color-mix(in srgb,var(--panel) 82%, transparent);
+  box-shadow:0 18px 60px var(--shadow);
+  backdrop-filter:blur(10px) saturate(1.05);
+}
+.profile-card::before,.project-card::before,.service::before,.metric::before,.brand-mark::before,.reactive::before{
+  display:none;
+  opacity:0;
+  background:none;
+}
+.profile-top{
+  grid-template-columns:1fr;
+}
+.avatar-panel{
+  min-height:210px;
+  border-radius:14px;
+  background:
+    radial-gradient(circle at 78% 18%, color-mix(in srgb,var(--accent) 18%, transparent), transparent 14rem),
+    linear-gradient(135deg,color-mix(in srgb,var(--panel2) 92%, #fff),color-mix(in srgb,var(--panel) 96%, #000)),
+    var(--panel2);
+}
+.avatar-panel::before{
+  content:"AW";
+  place-items:center;
+  padding:18px;
+  font-size:clamp(54px,8vw,92px);
+  letter-spacing:-.08em;
+  color:color-mix(in srgb,var(--text) 22%, transparent);
+}
+.avatar-panel::after{
+  display:none;
+}
+.profile-copy{
+  border-radius:14px;
+  background:transparent;
+}
+.profile-copy h2{
+  font-size:clamp(34px,4vw,54px);
+}
+.metrics{
+  grid-template-columns:repeat(3,1fr);
+}
+.metric{
+  border-radius:14px;
+  background:transparent;
+}
+.section{
+  padding:86px 0;
+}
+.section-head h2{
+  max-width:12ch;
+  font-size:clamp(50px,7vw,100px);
+  font-weight:950;
+}
+.filters{
+  border-top:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  padding:14px 0;
+}
+.projects-grid{
+  grid-template-columns:1fr;
+  gap:18px;
+}
+.project-card{
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(280px,.9fr) minmax(320px,1.1fr);
+  gap:18px;
+  padding:18px;
+}
+.project-media{
+  height:360px;
+  border-radius:12px;
+}
+.project-body{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  padding:8px 12px;
+}
+.project-body h3{
+  max-width:11ch;
+  font-size:clamp(40px,6vw,82px);
+  font-weight:950;
+  line-height:.9;
+}
+.project-body p{
+  max-width:42rem;
+  min-height:0;
+  font-size:16px;
+}
+.project-card:nth-child(even){
+  grid-template-columns:minmax(320px,1.1fr) minmax(280px,.9fr);
+}
+.project-card:nth-child(even) .project-media{
+  order:2;
+}
+.tag{
+  border-radius:8px;
+  color:var(--muted);
+  background:transparent;
+}
+.services-grid{
+  grid-template-columns:1fr;
+}
+.service.big{
+  min-height:0;
+}
+.service{
+  border-radius:18px;
+}
+.service h3{
+  max-width:13ch;
+  font-size:clamp(42px,7vw,88px);
+}
+.service-row,.point,.process-step,.faq details,.contact-panel{
+  border-radius:12px;
+  background:transparent;
+}
+.process{
+  grid-template-columns:repeat(4,1fr);
+}
+.process-step{
+  min-height:240px;
+  border-top:4px solid var(--accent);
+}
+.cta-inner{
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%, transparent), transparent 42%),
+    color-mix(in srgb,var(--panel) 82%, transparent);
+}
+.cta h2{
+  max-width:12ch;
+  font-weight:950;
+}
+.modal-card,.case-modal-grid img,input,textarea,select{
+  border-radius:12px;
+}
+.mobile-menu{
+  border-radius:14px;
+}
+.quick-controls{
+  display:none;
+  align-items:center;
+  gap:7px;
+  margin-left:auto;
+}
+.quick-controls .icon-btn{
+  width:38px;
+  min-width:38px;
+  height:38px;
+  border-radius:10px;
+}
+@media (max-width:860px){
+  .quick-controls{
+    display:flex;
+  }
+}
+.lang-btn{
+  min-width:54px;
+}
+.profile-badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:18px;
+}
+.focus-chip{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 11px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  color:var(--soft);
+  background:color-mix(in srgb,var(--panel) 72%, transparent);
+  font-size:12px;
+  font-weight:850;
+}
+.photo-note{
+  position:absolute;
+  left:16px;
+  right:auto;
+  bottom:16px;
+  z-index:2;
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:0 13px;
+  border:1px solid rgba(255,255,255,.28);
+  border-radius:12px;
+  color:#fff;
+  background:rgba(7,10,15,.42);
+  backdrop-filter:blur(14px);
+}
+.photo-note span{
+  color:rgba(255,255,255,.72);
+  font-size:12px;
+}
+.form-note{
+  margin:0;
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.45;
+}
+@media (max-width:1120px){
+  .hero{grid-template-columns:1fr}
+  .project-card,.project-card:nth-child(even){
+    grid-template-columns:1fr;
+  }
+  .project-card:nth-child(even) .project-media{
+    order:0;
+  }
+  .process{grid-template-columns:1fr 1fr}
+}
+@media (max-width:860px){
+  body{
+    background:linear-gradient(135deg,var(--bg),var(--bg2));
+  }
+  .hero{
+    padding-top:98px;
+  }
+  .hero h1{
+    font-size:clamp(56px,17vw,92px);
+  }
+  .section-head h2{
+    max-width:9ch;
+    font-size:clamp(46px,14vw,72px);
+  }
+  .section-head p{
+    max-width:22rem;
+    font-size:16px;
+  }
+  .filters{
+    align-items:flex-start;
+  }
+  .filter{
+    min-height:44px;
+  }
+  .profile-card,.project-card,.service,.cta-inner{
+    border-radius:16px;
+  }
+  .project-media{
+    height:250px;
+  }
+  .project-body h3{
+    font-size:clamp(34px,11vw,56px);
+  }
+  .process{grid-template-columns:1fr}
+}
+body{
+  background:linear-gradient(135deg,var(--bg),var(--bg2));
+}
+body::before,body::after{
+  display:none;
+  background:none;
+}
+.portrait-photo{
+  position:absolute;
+  inset:0;
+  z-index:1;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:saturate(.98) contrast(1.04);
+}
+.avatar-panel.missing-photo .portrait-photo{display:none}
+.avatar-panel.missing-photo::before{opacity:1}
+.project-media{
+  position:relative;
+  display:block;
+}
+.project-media::before{
+  content:"Preview loading";
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-items:center;
+  color:rgba(255,255,255,.66);
+  background:
+    radial-gradient(circle at 72% 18%, rgba(255,255,255,.18), transparent 14rem),
+    linear-gradient(135deg,#0c1118,#1b222d);
+}
+.project-media img{
+  position:relative;
+  z-index:1;
+}
+.project-media img.is-broken{
+  display:none;
+}
+.visual-preview{
+  position:relative;
+  width:100%;
+  height:100%;
+  min-height:inherit;
+  overflow:hidden;
+  border-radius:inherit;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(255,255,255,.38), transparent 16rem),
+    linear-gradient(135deg, #0a0f18, #161d28 54%, #05070b);
+  isolation:isolate;
+}
+.visual-preview::before{
+  content:"";
+  position:absolute;
+  inset:10%;
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:22px;
+  background:linear-gradient(135deg, rgba(255,255,255,.15), rgba(255,255,255,.035));
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.22), 0 28px 70px rgba(0,0,0,.28);
+}
+.visual-preview::after{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  background:linear-gradient(115deg, transparent 35%, rgba(255,255,255,.24), transparent 54%);
+  transform:translateX(-24%) rotate(8deg);
+  animation:previewSheen 6400ms var(--ease) infinite;
+}
+.preview-lumora{
+  background:
+    radial-gradient(circle at 78% 20%, rgba(232,201,133,.55), transparent 14rem),
+    radial-gradient(circle at 14% 80%, rgba(255,255,255,.18), transparent 12rem),
+    linear-gradient(135deg, #090a0d, #251f17 58%, #f4efe5);
+}
+.preview-aura{
+  background:
+    radial-gradient(circle at 28% 22%, rgba(104,160,255,.7), transparent 13rem),
+    linear-gradient(135deg, #07111f, #0e243c 50%, #dbe8ff);
+}
+.preview-veyra{
+  background:
+    radial-gradient(circle at 78% 24%, rgba(168,241,210,.62), transparent 13rem),
+    linear-gradient(135deg, #07130f, #16251e 48%, #eef9f2);
+}
+.preview-noir{
+  background:
+    radial-gradient(circle at 70% 28%, rgba(255,255,255,.34), transparent 11rem),
+    linear-gradient(135deg, #050506, #151515 54%, #c8c5bd);
+}
+.preview-frame{
+  position:absolute;
+  left:8%;
+  right:8%;
+  top:12%;
+  bottom:12%;
+  z-index:2;
+  display:grid;
+  grid-template-columns:1fr .68fr;
+  gap:12px;
+  padding:14px;
+  border:1px solid rgba(255,255,255,.24);
+  border-radius:22px;
+  background:rgba(255,255,255,.08);
+  backdrop-filter:blur(16px) saturate(1.2);
+}
+.preview-panel{
+  min-height:100%;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.12);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18);
+}
+.preview-stack{
+  display:grid;
+  gap:10px;
+}
+.preview-line{
+  height:10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.56);
+}
+.preview-line.short{width:58%}
+.preview-line.mid{width:76%}
+.preview-chips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:auto;
+}
+.preview-chips span{
+  width:46px;
+  height:22px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.22);
+  background:rgba(255,255,255,.16);
+}
+.case-preview{
+  min-height:390px;
+  border:1px solid var(--line);
+}
+.case-image{
+  width:100%;
+  height:390px;
+  object-fit:cover;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#10151c;
+}
+@keyframes previewSheen{
+  0%,34%{transform:translateX(-38%) rotate(8deg);opacity:.08}
+  52%{transform:translateX(30%) rotate(8deg);opacity:.65}
+  100%{transform:translateX(48%) rotate(8deg);opacity:.08}
+}
+@media (max-width:860px){
+  body{cursor:auto}
+  button,a{cursor:pointer}
+  #cursorCanvas,.cursor-dot{display:none}
+  .topbar{
+    left:10px;
+    right:10px;
+    top:10px;
+    min-height:58px;
+    border-radius:16px;
+  }
+  .brand-copy span{display:none}
+  .nav{display:none}
+  .hero{
+    min-height:auto;
+    padding:92px 14px 38px;
+    gap:18px;
+  }
+  .hero h1{
+    max-width:8.5ch;
+    font-size:clamp(46px,15vw,70px);
+    line-height:.86;
+  }
+  .hero p{
+    max-width:24rem;
+    font-size:16px;
+    line-height:1.55;
+  }
+  .hero-actions{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+  }
+  .profile-card{
+    padding:10px;
+  }
+  .avatar-panel{
+    min-height:260px;
+  }
+  .metrics{
+    grid-template-columns:1fr;
+  }
+  .shell{
+    padding:0 14px;
+  }
+  .section{
+    padding:58px 0;
+  }
+  .section-head h2{
+    max-width:10ch;
+    font-size:clamp(38px,13vw,58px);
+    line-height:.88;
+  }
+  .filters{
+    flex-wrap:nowrap;
+    overflow-x:auto;
+    padding-bottom:12px;
+    scrollbar-width:none;
+  }
+  .filters::-webkit-scrollbar{display:none}
+  .filter{
+    flex:0 0 auto;
+    white-space:nowrap;
+  }
+  .project-card{
+    gap:12px;
+    padding:10px;
+    border-radius:18px;
+  }
+  .project-media{
+    height:auto;
+    aspect-ratio:1.1 / 1;
+    border-radius:14px;
+  }
+  .preview-frame{
+    left:7%;
+    right:7%;
+    top:10%;
+    bottom:10%;
+    grid-template-columns:1fr;
+    padding:10px;
+  }
+  .preview-stack{
+    gap:7px;
+  }
+  .project-body{
+    padding:10px 4px 4px;
+  }
+  .project-body h3{
+    max-width:12ch;
+    font-size:clamp(32px,11vw,48px);
+  }
+  .project-body p{
+    font-size:15px;
+  }
+  .project-actions{
+    display:grid;
+    grid-template-columns:1fr;
+  }
+  .case-link,.copy-btn,.btn{
+    width:100%;
+    min-height:46px;
+  }
+  .service{
+    padding:20px;
+  }
+  .service h3{
+    font-size:clamp(34px,12vw,54px);
+  }
+  .service-row{
+    display:grid;
+    gap:6px;
+  }
+  .service-row span{
+    text-align:left;
+  }
+  .cta{
+    padding:58px 14px 72px;
+  }
+  .cta-inner{
+    grid-template-columns:1fr;
+    padding:22px;
+  }
+  .modal{
+    padding:12px;
+  }
+  .modal-card{
+    max-height:calc(100dvh - 24px);
+    overflow:auto;
+    padding:14px;
+    border-radius:18px;
+  }
+  .modal-head{
+    align-items:flex-start;
+  }
+  .case-preview{
+    min-height:250px;
+  }
+}
+@media (max-width:430px){
+  .topbar{
+    gap:8px;
+    left:8px;
+    right:8px;
+    min-height:54px;
+    padding:6px;
+  }
+  .brand{
+    flex:1 1 auto;
+    gap:9px;
+  }
+  .brand-copy strong{
+    max-width:108px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .nav{
+    flex:0 0 auto;
+    display:flex;
+    gap:6px;
+  }
+  .nav a,.nav .contact-nav{
+    display:none;
+  }
+  .brand-copy strong{font-size:12px}
+  .brand-mark{
+    width:36px;
+    height:36px;
+  }
+  .top-actions{
+    gap:6px;
+  }
+  .icon-btn,.lang-btn{
+    width:36px;
+    min-width:36px;
+    height:36px;
+    border-radius:10px;
+  }
+  .contact-nav{
+    display:none;
+  }
+  .photo-note{
+    left:12px;
+    right:auto;
+    bottom:12px;
+    min-height:40px;
+    align-items:center;
+    justify-content:center;
+    flex-direction:row;
+    gap:8px;
+    padding:0 11px;
+  }
+  .photo-note span{
+    max-width:100%;
+    display:none;
+  }
+  .hero h1{
+    font-size:clamp(42px,14vw,62px);
+  }
+}
+@media (max-width:860px){
+  .mobile-controls{
+    position:fixed;
+    top:18px;
+    right:16px;
+    z-index:82;
+    display:flex;
+    gap:7px;
+  }
+  .mobile-controls .icon-btn{
+    width:36px;
+    min-width:36px;
+    height:36px;
+    border-radius:10px;
+    color:var(--text);
+    background:color-mix(in srgb,var(--panel) 88%, transparent);
+  }
+  .topbar{
+    padding-right:94px;
+    overflow:visible;
+  }
+  .nav{
+    display:flex !important;
+    position:fixed !important;
+    right:16px !important;
+    top:19px !important;
+    z-index:70 !important;
+    transform:none !important;
+    width:auto;
+    max-width:84px;
+    overflow:visible;
+  }
+  .nav a,.nav .contact-nav{
+    display:none !important;
+  }
+  .nav .lang-btn{
+    display:none !important;
+  }
+  .nav .icon-btn{
+    display:grid !important;
+  }
+  .menu-btn{
+    display:grid !important;
+  }
+}
+</style>
+</head>
+<body data-theme="light">
+<canvas id="cursorCanvas" aria-hidden="true"></canvas>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<div class="loader" id="loader">
+  <div class="loader-inner">
+    <div class="loader-mark">A</div>
+    <h1 data-i18n="loaderTitle">Anton Webcoder</h1>
+    <p data-i18n="loaderText">Loading the portfolio hub with projects, services, support flow, and publication-ready navigation.</p>
+    <div class="load-track"><span></span></div>
+  </div>
+</div>
+
+<header class="topbar">
+  <a class="brand" href="#home" aria-label="Anton portfolio home">
+    <span class="brand-mark reactive">A</span>
+    <span class="brand-copy"><strong data-i18n="brandTitle">Anton Webcoder</strong><span data-i18n="brandSub">Sites, support, fixes</span></span>
+  </a>
+  <div class="quick-controls" aria-label="Quick controls">
+    <button class="icon-btn reactive" type="button" data-theme-toggle aria-label="Toggle theme"><span class="theme-glyph"></span></button>
+    <button class="icon-btn reactive" type="button" data-menu-toggle aria-label="Open menu"><span class="menu-lines"><i></i><i></i><i></i></span></button>
+  </div>
+  <nav class="nav" aria-label="Primary navigation">
+    <a href="#work" data-i18n="navWork">Work</a>
+    <a href="#services" data-i18n="navServices">Services</a>
+    <a href="#process" data-i18n="navProcess">Process</a>
+    <button class="icon-btn reactive" id="themeToggle" type="button" data-theme-toggle aria-label="Toggle theme"><span class="theme-glyph"></span></button>
+    <button class="icon-btn reactive lang-btn" id="langToggle" type="button" aria-label="Switch language">RU</button>
+    <button class="btn primary contact-nav" type="button" data-open-contact data-i18n="startProject">Start project</button>
+    <button class="icon-btn reactive menu-btn" id="menuToggle" type="button" data-menu-toggle aria-label="Open menu"><span class="menu-lines"><i></i><i></i><i></i></span></button>
+  </nav>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#work" data-i18n="navWork">Work</a>
+  <a href="#services" data-i18n="navServices">Services</a>
+  <a href="#process" data-i18n="navProcess">Process</a>
+  <button type="button" data-lang-switch>RU / EN</button>
+  <button type="button" data-open-contact data-i18n="startProject">Start project</button>
+</div>
+
+<main id="home">
+  <section class="hero">
+    <div class="hero-copy reveal">
+      <h1 data-i18n-html="heroTitle">Websites for <span>any idea.</span></h1>
+      <p data-i18n="heroText">I can build a website for your business idea, business project, or any personal project in the style you imagine.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#work" data-i18n="viewWork">View work</a>
+        <button class="btn" type="button" data-open-contact data-i18n="startProject">Start project</button>
+      </div>
+    </div>
+
+    <div class="profile-stage reveal">
+      <article class="profile-card reactive">
+        <div class="profile-top">
+          <div class="avatar-panel">
+            <img class="portrait-photo" src="img/anton-photo.jpg" alt="Anton Webcoder photo" onerror="this.hidden=true;this.parentElement.classList.add('missing-photo')">
+            <div class="photo-note"><strong data-i18n="photoTitle">Anton Webcoder</strong><span data-i18n="photoText">Portrait slot</span></div>
+          </div>
+          <div class="profile-copy">
+            <h2 data-i18n="aboutTitle">Anton Webcoder.</h2>
+            <p data-i18n="aboutText">I help people create websites, maintain them, find problems, fix bugs, improve design, and prepare projects for launch.</p>
+            <div class="profile-badges">
+              <span class="focus-chip" data-i18n="badgeBuild">Build websites</span>
+              <span class="focus-chip" data-i18n="badgeSupport">Support and maintenance</span>
+              <span class="focus-chip" data-i18n="badgeFix">Find and fix problems</span>
+              <span class="focus-chip" data-i18n="badgeAny">Any style on request</span>
+            </div>
+            <div class="profile-points">
+              <div class="point"><strong data-i18n="focusLabel">Focus</strong><span data-i18n="focusValue">Websites, support, audits, fixes</span></div>
+              <div class="point"><strong data-i18n="styleLabel">Style</strong><span data-i18n="styleValue">Premium, cinematic, conversion-ready, or custom</span></div>
+              <div class="point"><strong data-i18n="outputLabel">Output</strong><span data-i18n="outputValue">Standalone files and publishable pages</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="metrics">
+          <div class="metric reactive"><strong>4</strong><span data-i18n="metricOne">Finished example projects</span></div>
+          <div class="metric reactive"><strong>24/7</strong><span data-i18n="metricTwo">Support mindset for client sites</span></div>
+          <div class="metric reactive"><strong>Any</strong><span data-i18n="metricThree">Style, niche, business idea</span></div>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section class="section shell" id="work">
+    <div class="section-head reveal">
+      <h2 data-i18n="workTitle">Selected portfolio projects.</h2>
+      <p data-i18n="workText">These examples show different directions: premium landing, AI interface, mobile app concept, and e-commerce store.</p>
+    </div>
+    <div class="filters reveal" id="filters"></div>
+    <div class="projects-grid" id="projectsGrid"></div>
+  </section>
+
+  <section class="section shell" id="services">
+    <div class="services-grid">
+      <article class="service big reactive reveal">
+        <h3 data-i18n="servicesTitle">What I can do for you.</h3>
+        <p data-i18n="servicesText">I can create a new website, improve an existing one, fix broken buttons, adapt mobile layouts, connect forms, and prepare the project for publishing.</p>
+        <div class="service-list">
+          <div class="service-row"><strong data-i18n="serviceOneTitle">New website</strong><span data-i18n="serviceOneText">Business site, landing page, portfolio, store, or promo page</span></div>
+          <div class="service-row"><strong data-i18n="serviceTwoTitle">Website support</strong><span data-i18n="serviceTwoText">Updates, content edits, layout fixes, technical cleanup</span></div>
+          <div class="service-row"><strong data-i18n="serviceThreeTitle">Problem fixing</strong><span data-i18n="serviceThreeText">Broken buttons, mobile issues, forms, visual bugs, speed problems</span></div>
+          <div class="service-row"><strong data-i18n="serviceFourTitle">Any style</strong><span data-i18n="serviceFourText">Minimal, cinematic, luxury, brutalist, playful, corporate, or custom</span></div>
+        </div>
+      </article>
+      <div class="service-stack">
+        <article class="service reactive reveal">
+          <h3 data-i18n="deliveryTitle">Clear delivery.</h3>
+          <p data-i18n="deliveryText">I can give you a standalone file, a Next.js project, or a deploy-ready website depending on how you want to publish it.</p>
+        </article>
+        <article class="service reactive reveal" style="margin-top:16px">
+          <h3 data-i18n="iterationTitle">Careful checking.</h3>
+          <p data-i18n="iterationText">I check buttons, forms, mobile layout, links, visual details, and errors before the final version is handed over.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section shell" id="process">
+    <div class="section-head reveal">
+      <h2 data-i18n="processTitle">How the work starts.</h2>
+      <p data-i18n="processText">You describe your idea, I choose the right structure, build the site, check the details, and prepare it for publishing.</p>
+    </div>
+    <div class="process">
+      <div class="process-step reveal"><strong data-i18n="stepOneTitle">Brief</strong><p data-i18n="stepOneText">You send the idea, goals, examples, deadline, and budget range.</p></div>
+      <div class="process-step reveal"><strong data-i18n="stepTwoTitle">Direction</strong><p data-i18n="stepTwoText">I choose the structure, style, sections, and main conversion path.</p></div>
+      <div class="process-step reveal"><strong data-i18n="stepThreeTitle">Build</strong><p data-i18n="stepThreeText">I create the page, interactions, responsive layout, and working form.</p></div>
+      <div class="process-step reveal"><strong data-i18n="stepFourTitle">Publish</strong><p data-i18n="stepFourText">We check everything and prepare deployment or standalone delivery.</p></div>
+    </div>
+  </section>
+
+  <section class="section shell" id="faq">
+    <div class="section-head reveal">
+      <h2 data-i18n="faqTitle">Questions clients may ask.</h2>
+    </div>
+    <div class="faq">
+      <details class="reveal"><summary data-i18n="faqOneTitle">Can this be published as a real site?</summary><p data-i18n="faqOneText">Yes. The portfolio hub is copied to `public/anton-portfolio.html`, and the root page redirects to it.</p></details>
+      <details class="reveal"><summary data-i18n="faqTwoTitle">Are the buttons real?</summary><p data-i18n="faqTwoText">Yes. Project cards open live demos or case modals, filters update the grid, contact forms send requests, and the theme switch works.</p></details>
+      <details class="reveal"><summary data-i18n="faqThreeTitle">Can the site be made in another style?</summary><p data-i18n="faqThreeText">Yes. The project can be minimal, cinematic, premium, corporate, playful, or based on your references.</p></details>
+    </div>
+  </section>
+
+  <section class="cta" id="contact">
+    <div class="cta-inner reveal">
+      <div>
+        <h2 data-i18n="ctaTitle">Ready for your project.</h2>
+        <p data-i18n="ctaText">I am ready to build a website for your business idea, business project, personal project, or any future vision you have.</p>
+      </div>
+      <aside class="contact-panel reactive">
+        <h3 data-i18n="requestTitle">Project request</h3>
+        <p data-i18n="requestText">Send your idea, budget, and project type. The request is configured for my work email.</p>
+        <div class="contact-actions">
+          <button class="btn primary" type="button" data-open-contact data-i18n="startProject">Start project</button>
+          <button class="btn" type="button" id="copyEmail" data-i18n="copyEmail">Copy contact email</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="caseModal" role="dialog" aria-modal="true" aria-labelledby="caseTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><h2 id="caseTitle">Case study</h2><p id="caseSubtitle">Portfolio project overview.</p></div>
+      <button class="close" type="button" data-close-modal aria-label="Close">x</button>
+    </div>
+    <div class="case-modal-grid">
+      <img id="caseImage" class="case-image" src="portfolio-assets/thumb-lumora.png" alt="Lumora Premium Studio preview">
+      <div class="case-copy">
+        <h3 id="caseName">Lumora Premium Studio</h3>
+        <p id="caseDesc"></p>
+        <div class="case-stats">
+          <div class="case-stat"><strong id="caseType">Landing</strong><span data-i18n="caseTypeLabel">Project type</span></div>
+          <div class="case-stat"><strong id="caseValue">Lead capture</strong><span data-i18n="caseValueLabel">Business value</span></div>
+        </div>
+        <div class="project-actions">
+          <a class="case-link primary" id="caseLive" href="lumora-premium-studio.html" target="_blank" rel="noreferrer" data-i18n="openDemo">Open live demo</a>
+          <button class="copy-btn" type="button" id="copyCase" data-i18n="copyCase">Copy case text</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="contactModal" role="dialog" aria-modal="true" aria-labelledby="contactTitle">
+  <div class="modal-card">
+    <div class="modal-head">
+      <div><h2 id="contactTitle" data-i18n="contactTitle">Start a project</h2><p data-i18n="contactText">Tell me what you want to build. The request is sent to my work email.</p></div>
+      <button class="close" type="button" data-close-modal aria-label="Close">x</button>
+    </div>
+    <form id="contactForm" action="https://formsubmit.co/ryabets5000@gmail.com" method="POST">
+      <input type="hidden" name="_subject" value="New website request from Anton Webcoder portfolio">
+      <input type="hidden" name="_template" value="table">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="field-grid">
+        <label><span data-i18n="fieldName">Name</span><input name="name" autocomplete="name" required placeholder="Your name" data-placeholder-en="Your name" data-placeholder-ru="Ваше имя"></label>
+        <label><span data-i18n="fieldEmail">Email</span><input name="email" type="email" autocomplete="email" required placeholder="you@company.com" data-placeholder-en="you@company.com" data-placeholder-ru="you@company.com"></label>
+      </div>
+      <div class="field-grid">
+        <label><span data-i18n="fieldType">Project type</span><select name="type" id="projectTypeSelect"></select></label>
+        <label><span data-i18n="fieldBudget">Budget</span><select name="budget" id="budgetSelect"></select></label>
+      </div>
+      <label><span data-i18n="fieldBrief">Brief</span><textarea name="brief" required placeholder="What do you need, what style do you like, and when should it be ready?" data-placeholder-en="What do you need, what style do you like, and when should it be ready?" data-placeholder-ru="Что вам нужно, какой стиль нравится и когда сайт должен быть готов?"></textarea></label>
+      <p class="form-note" data-i18n="formNote">After publishing, requests are sent to ryabets5000@gmail.com. Mail fallback opens if the form service is unavailable.</p>
+      <button class="btn primary" type="submit" data-i18n="sendRequest">Send request</button>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Ready</div>
+
+<script>
+(() => {
+  const CONTACT_EMAIL = "ryabets5000@gmail.com";
+  const FORM_ENDPOINT = "https://formsubmit.co/ajax/ryabets5000@gmail.com";
+  const isFileMode = location.protocol === "file:";
+  const qaMode = new URLSearchParams(location.search).has("qa");
+  const livePath = (publicPath, localPath) => isFileMode ? localPath : publicPath;
+  let currentLang = "en";
+  const copy = {
+    en:{
+      loaderTitle:"Anton Webcoder",
+      loaderText:"Loading the portfolio hub with projects, services, support flow, and publication-ready navigation.",
+      brandTitle:"Anton Webcoder",
+      brandSub:"Sites, support, fixes",
+      navWork:"Work",
+      navServices:"Services",
+      navProcess:"Process",
+      startProject:"Start project",
+      viewWork:"View work",
+      heroTitle:"Websites for <span>any idea.</span>",
+      heroText:"I can build a website for your business idea, business project, or any personal project in the style you imagine.",
+      photoTitle:"Anton Webcoder",
+      photoText:"Portrait slot",
+      aboutTitle:"Anton Webcoder.",
+      aboutText:"I help people create websites, maintain them, find problems, fix bugs, improve design, and prepare projects for launch.",
+      badgeBuild:"Build websites",
+      badgeSupport:"Support and maintenance",
+      badgeFix:"Find and fix problems",
+      badgeAny:"Any style on request",
+      focusLabel:"Focus",
+      focusValue:"Websites, support, audits, fixes",
+      styleLabel:"Style",
+      styleValue:"Premium, cinematic, conversion-ready, or custom",
+      outputLabel:"Output",
+      outputValue:"Standalone files and publishable pages",
+      metricOne:"Finished example projects",
+      metricTwo:"Support mindset for client sites",
+      metricThree:"Style, niche, business idea",
+      workTitle:"Selected portfolio projects.",
+      workText:"These examples show different directions: premium landing, AI interface, mobile app concept, and e-commerce store.",
+      servicesTitle:"What I can do for you.",
+      servicesText:"I can create a new website, improve an existing one, fix broken buttons, adapt mobile layouts, connect forms, and prepare the project for publishing.",
+      serviceOneTitle:"New website",
+      serviceOneText:"Business site, landing page, portfolio, store, or promo page",
+      serviceTwoTitle:"Website support",
+      serviceTwoText:"Updates, content edits, layout fixes, technical cleanup",
+      serviceThreeTitle:"Problem fixing",
+      serviceThreeText:"Broken buttons, mobile issues, forms, visual bugs, speed problems",
+      serviceFourTitle:"Any style",
+      serviceFourText:"Minimal, cinematic, luxury, brutalist, playful, corporate, or custom",
+      deliveryTitle:"Clear delivery.",
+      deliveryText:"I can give you a standalone file, a Next.js project, or a deploy-ready website depending on how you want to publish it.",
+      iterationTitle:"Careful checking.",
+      iterationText:"I check buttons, forms, mobile layout, links, visual details, and errors before the final version is handed over.",
+      processTitle:"How the work starts.",
+      processText:"You describe your idea, I choose the right structure, build the site, check the details, and prepare it for publishing.",
+      stepOneTitle:"Brief",
+      stepOneText:"You send the idea, goals, examples, deadline, and budget range.",
+      stepTwoTitle:"Direction",
+      stepTwoText:"I choose the structure, style, sections, and main conversion path.",
+      stepThreeTitle:"Build",
+      stepThreeText:"I create the page, interactions, responsive layout, and working form.",
+      stepFourTitle:"Publish",
+      stepFourText:"We check everything and prepare deployment or standalone delivery.",
+      faqTitle:"Questions clients may ask.",
+      faqOneTitle:"Can this be published as a real site?",
+      faqOneText:"Yes. The portfolio hub is copied to `public/anton-portfolio.html`, and the root page redirects to it.",
+      faqTwoTitle:"Are the buttons real?",
+      faqTwoText:"Yes. Project cards open live demos or case modals, filters update the grid, contact forms send requests, and the theme switch works.",
+      faqThreeTitle:"Can the site be made in another style?",
+      faqThreeText:"Yes. The project can be minimal, cinematic, premium, corporate, playful, or based on your references.",
+      ctaTitle:"Ready for your project.",
+      ctaText:"I am ready to build a website for your business idea, business project, personal project, or any future vision you have.",
+      requestTitle:"Project request",
+      requestText:"Send your idea, budget, and project type. The request is configured for my work email.",
+      copyEmail:"Copy contact email",
+      caseTypeLabel:"Project type",
+      caseValueLabel:"Business value",
+      openDemo:"Open live demo",
+      copyCase:"Copy case text",
+      contactTitle:"Start a project",
+      contactText:"Tell me what you want to build. The request is sent to my work email.",
+      fieldName:"Name",
+      fieldEmail:"Email",
+      fieldType:"Project type",
+      fieldBudget:"Budget",
+      fieldBrief:"Brief",
+      formNote:"After publishing, requests are sent to ryabets5000@gmail.com. Mail fallback opens if the form service is unavailable.",
+      sendRequest:"Send request",
+      all:"All",
+      categories:{Landing:"Landing",Dashboard:"Dashboard",Mobile:"Mobile",Commerce:"Commerce"},
+      projectTypes:["New website","Website redesign","Website support","Bug fixing","Business landing","Portfolio","Online store","Custom project"],
+      budgets:["$100 - $300","$300 - $800","$800 - $1500","$1500 - $3000","$3000 - $5000","$5000 - $8000","Not sure yet"],
+      themeDark:"Dark theme enabled",
+      themeLight:"Light theme enabled",
+      copiedEmail:"Email copied",
+      copiedCase:"Case text copied",
+      sending:"Sending request",
+      sent:"Request sent",
+      fallback:"Opening email fallback",
+      endpointFailed:"Form service failed, opening email fallback"
+    },
+    ru:{
+      loaderTitle:"Anton Webcoder",
+      loaderText:"Загружаю портфолио с проектами, услугами, заявкой и навигацией для публикации.",
+      brandTitle:"Anton Webcoder",
+      brandSub:"Сайты, поддержка, правки",
+      navWork:"Работы",
+      navServices:"Услуги",
+      navProcess:"Процесс",
+      startProject:"Начать проект",
+      viewWork:"Смотреть работы",
+      heroTitle:"Сайты для <span>любой идеи.</span>",
+      heroText:"Я могу сделать сайт для вашей бизнес-идеи, бизнес-проекта, личного проекта или любого будущего видения.",
+      photoTitle:"Anton Webcoder",
+      photoText:"Фото скоро",
+      aboutTitle:"Anton Webcoder.",
+      aboutText:"Я помогаю создавать сайты, обслуживать их, находить проблемы, исправлять ошибки, улучшать дизайн и готовить проекты к запуску.",
+      badgeBuild:"Создание сайтов",
+      badgeSupport:"Поддержка и обслуживание",
+      badgeFix:"Поиск и исправление проблем",
+      badgeAny:"Любой стиль под задачу",
+      focusLabel:"Фокус",
+      focusValue:"Сайты, поддержка, аудит, исправления",
+      styleLabel:"Стиль",
+      styleValue:"Premium, cinematic, conversion-ready или ваш стиль",
+      outputLabel:"Итог",
+      outputValue:"Автономные файлы и страницы для публикации",
+      metricOne:"Готовых примера проектов",
+      metricTwo:"Подход к поддержке клиентских сайтов",
+      metricThree:"Стиль, ниша, бизнес-идея",
+      workTitle:"Избранные проекты.",
+      workText:"Эти примеры показывают разные направления: premium landing, AI-интерфейс, mobile app concept и e-commerce store.",
+      servicesTitle:"Что я могу сделать для вас.",
+      servicesText:"Я могу создать новый сайт, улучшить существующий, исправить кнопки, адаптировать мобильную версию, подключить формы и подготовить проект к публикации.",
+      serviceOneTitle:"Новый сайт",
+      serviceOneText:"Сайт для бизнеса, лендинг, портфолио, магазин или промо-страница",
+      serviceTwoTitle:"Поддержка сайта",
+      serviceTwoText:"Обновления, правки контента, исправление вёрстки, техническая чистка",
+      serviceThreeTitle:"Исправление проблем",
+      serviceThreeText:"Кнопки, мобильная версия, формы, визуальные баги, скорость",
+      serviceFourTitle:"Любой стиль",
+      serviceFourText:"Minimal, cinematic, luxury, brutalist, playful, corporate или кастом",
+      deliveryTitle:"Понятная сдача.",
+      deliveryText:"Могу отдать автономный файл, Next.js проект или сайт, готовый к публикации.",
+      iterationTitle:"Внимательная проверка.",
+      iterationText:"Проверяю кнопки, формы, мобильную версию, ссылки, визуальные детали и ошибки перед финальной сдачей.",
+      processTitle:"Как начинается работа.",
+      processText:"Вы описываете идею, я выбираю структуру, делаю сайт, проверяю детали и готовлю его к публикации.",
+      stepOneTitle:"Бриф",
+      stepOneText:"Вы отправляете идею, цели, примеры, срок и бюджет.",
+      stepTwoTitle:"Направление",
+      stepTwoText:"Я выбираю структуру, стиль, секции и главный путь заявки.",
+      stepThreeTitle:"Разработка",
+      stepThreeText:"Я делаю страницу, интерактив, адаптив и рабочую форму.",
+      stepFourTitle:"Публикация",
+      stepFourText:"Мы всё проверяем и готовим деплой или автономную версию.",
+      faqTitle:"Вопросы клиентов.",
+      faqOneTitle:"Можно ли опубликовать это как реальный сайт?",
+      faqOneText:"Да. Главный сайт лежит в `public/anton-portfolio.html`, а корневая страница ведёт на него.",
+      faqTwoTitle:"Кнопки реально работают?",
+      faqTwoText:"Да. Карточки открывают демо или модалки, фильтры обновляют проекты, форма отправляет заявку, переключатель темы работает.",
+      faqThreeTitle:"Можно сделать сайт в другом стиле?",
+      faqThreeText:"Да. Сайт может быть минималистичным, cinematic, premium, корпоративным, ярким или по вашим референсам.",
+      ctaTitle:"Готов к вашему проекту.",
+      ctaText:"Я готов сделать сайт для вашей бизнес-идеи, бизнес-проекта, личного проекта или любого будущего видения.",
+      requestTitle:"Заявка на проект",
+      requestText:"Отправьте идею, бюджет и тип проекта. Заявка настроена на мою рабочую почту.",
+      copyEmail:"Скопировать почту",
+      caseTypeLabel:"Тип проекта",
+      caseValueLabel:"Ценность",
+      openDemo:"Открыть демо",
+      copyCase:"Скопировать кейс",
+      contactTitle:"Начать проект",
+      contactText:"Расскажите, что нужно сделать. Заявка отправляется на мою рабочую почту.",
+      fieldName:"Имя",
+      fieldEmail:"Почта",
+      fieldType:"Тип проекта",
+      fieldBudget:"Бюджет",
+      fieldBrief:"Описание",
+      formNote:"После публикации заявки отправляются на ryabets5000@gmail.com. Если сервис формы недоступен, откроется резервная отправка через почту.",
+      sendRequest:"Отправить заявку",
+      all:"Все",
+      categories:{Landing:"Лендинг",Dashboard:"AI-интерфейс",Mobile:"Мобильный концепт",Commerce:"Магазин"},
+      projectTypes:["Новый сайт","Редизайн сайта","Поддержка сайта","Исправление багов","Лендинг для бизнеса","Портфолио","Интернет-магазин","Кастомный проект"],
+      budgets:["$100 - $300","$300 - $800","$800 - $1500","$1500 - $3000","$3000 - $5000","$5000 - $8000","Пока не уверен"],
+      themeDark:"Включена тёмная тема",
+      themeLight:"Включена светлая тема",
+      copiedEmail:"Почта скопирована",
+      copiedCase:"Текст кейса скопирован",
+      sending:"Отправляю заявку",
+      sent:"Заявка отправлена",
+      fallback:"Открываю резервную отправку через почту",
+      endpointFailed:"Сервис формы недоступен, открываю почту"
+    }
+  };
+  const projects = [
+    {
+      id:"lumora",
+      name:"Lumora Premium Studio",
+      type:"Landing",
+      category:"Landing",
+      value:"Lead capture",
+      image:"portfolio-assets/thumb-lumora.png",
+      live:livePath("lumora-premium-studio.html", "../lumora-premium-studio/index.html"),
+      desc:{en:"A luxury studio landing with cinematic entry, gold motion, portfolio cards, services, and a working lead modal.",ru:"Luxury studio landing с кинематографичным входом, золотой анимацией, карточками работ, услугами и рабочей заявкой."},
+      tags:{en:["Landing","Studio","Lead modal"],ru:["Лендинг","Студия","Заявка"]}
+    },
+    {
+      id:"aura",
+      name:"Aura AI Command",
+      type:"AI SaaS",
+      category:"Dashboard",
+      value:"Product demo",
+      image:"portfolio-assets/thumb-aura.png",
+      live:livePath("aura-ai-command.html", "../aura-ai-command/index.html"),
+      desc:{en:"A premium AI command dashboard with multiple screens, assistant interactions, command palette, charts, and glass-reactive icons.",ru:"Premium AI dashboard с несколькими экранами, ассистентом, command palette, графиками и реактивными иконками."},
+      tags:{en:["AI","Dashboard","SaaS"],ru:["AI","Dashboard","SaaS"]}
+    },
+    {
+      id:"veyra",
+      name:"Veyra Mobile AI",
+      type:"Mobile app",
+      category:"Mobile",
+      value:"App concept",
+      image:"portfolio-assets/thumb-veyra.png",
+      live:livePath("veyra-mobile-ai.html", "../veyra-mobile-ai/index.html"),
+      desc:{en:"A mobile app concept with interactive phone preview, onboarding, dashboard, AI assistant, paywall, profile, and request modal.",ru:"Mobile app concept с интерактивным телефоном, onboarding, dashboard, AI assistant, paywall, profile и заявкой."},
+      tags:{en:["Mobile","AI","Paywall"],ru:["Mobile","AI","Paywall"]}
+    },
+    {
+      id:"noir",
+      name:"Noir Atelier Commerce",
+      type:"E-commerce",
+      category:"Commerce",
+      value:"Store flow",
+      image:"portfolio-assets/thumb-noir.png",
+      live:livePath("noir-atelier-commerce.html", "../noir-atelier-commerce/index.html"),
+      desc:{en:"A premium product store with generated product photography, filters, quick view, cart drawer, quantity controls, and checkout request.",ru:"Premium product store с продуктовой фотографией, фильтрами, quick view, корзиной, количеством и checkout-заявкой."},
+      tags:{en:["Store","Catalog","Cart"],ru:["Магазин","Каталог","Корзина"]}
+    }
+  ];
+  const categories = ["All", ...new Set(projects.map((project) => project.category))];
+  const body = document.body;
+  const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const loader = document.getElementById("loader");
+  const toast = document.getElementById("toast");
+  const filters = document.getElementById("filters");
+  const grid = document.getElementById("projectsGrid");
+  const caseModal = document.getElementById("caseModal");
+  const contactModal = document.getElementById("contactModal");
+  const contactForm = document.getElementById("contactForm");
+  const projectTypeSelect = document.getElementById("projectTypeSelect");
+  const budgetSelect = document.getElementById("budgetSelect");
+  const mobileMenu = document.getElementById("mobileMenu");
+  const cursorCanvas = document.getElementById("cursorCanvas");
+  const cursorDot = document.querySelector(".cursor-dot");
+  const ctx = cursorCanvas ? cursorCanvas.getContext("2d") : null;
+  let activeCategory = "All";
+  let activeProject = projects[0];
+  let particles = [];
+  let pointer = {x: innerWidth / 2, y: innerHeight / 2, px: innerWidth / 2, py: innerHeight / 2, speed:0};
+  const t = (key) => copy[currentLang][key] || copy.en[key] || key;
+
+  const showToast = (message) => {
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(showToast.timer);
+    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2400);
+  };
+  const hideLoader = () => {
+    if (qaMode) {
+      loader.remove();
+      return;
+    }
+    loader.classList.add("is-hidden");
+    setTimeout(() => loader.remove(), 850);
+  };
+  if (qaMode) hideLoader();
+  window.addEventListener("load", () => setTimeout(hideLoader, qaMode ? 0 : reduceMotion ? 100 : 850));
+  setTimeout(hideLoader, qaMode ? 0 : reduceMotion ? 200 : 1500);
+
+  const renderFilters = () => {
+    filters.innerHTML = categories.map((category) => {
+      const label = category === "All" ? t("all") : t("categories")[category];
+      return `<button class="filter ${category === activeCategory ? "active" : ""}" type="button" data-filter="${category}">${label}</button>`;
+    }).join("");
+  };
+  const renderSelects = () => {
+    const selectedType = projectTypeSelect.value;
+    const selectedBudget = budgetSelect.value;
+    projectTypeSelect.innerHTML = t("projectTypes").map((option) => `<option>${option}</option>`).join("");
+    budgetSelect.innerHTML = t("budgets").map((option) => `<option>${option}</option>`).join("");
+    if ([...projectTypeSelect.options].some((option) => option.value === selectedType)) projectTypeSelect.value = selectedType;
+    if ([...budgetSelect.options].some((option) => option.value === selectedBudget)) budgetSelect.value = selectedBudget;
+  };
+  const visualPreviewInner = () => `
+    <div class="preview-frame">
+      <div class="preview-panel"></div>
+      <div class="preview-stack">
+        <span class="preview-line"></span>
+        <span class="preview-line mid"></span>
+        <span class="preview-line short"></span>
+        <div class="preview-chips"><span></span><span></span><span></span></div>
+      </div>
+    </div>
+  `;
+  const visualPreview = (project) => `
+    <div class="visual-preview preview-${project.id}" role="img" aria-label="${project.name} preview">
+      ${visualPreviewInner()}
+    </div>
+  `;
+  const applyLanguage = () => {
+    document.documentElement.lang = currentLang;
+    document.querySelectorAll("[data-i18n]").forEach((element) => {
+      element.textContent = t(element.dataset.i18n);
+    });
+    document.querySelectorAll("[data-i18n-html]").forEach((element) => {
+      element.innerHTML = t(element.dataset.i18nHtml);
+    });
+    document.querySelectorAll("[data-placeholder-en]").forEach((element) => {
+      element.placeholder = element.dataset[`placeholder${currentLang === "ru" ? "Ru" : "En"}`] || element.placeholder;
+    });
+    document.getElementById("langToggle").textContent = currentLang === "en" ? "RU" : "EN";
+    document.querySelectorAll("[data-lang-switch]").forEach((button) => {
+      button.textContent = currentLang === "en" ? "Русская версия" : "English version";
+    });
+    document.title = currentLang === "ru"
+      ? "Anton Webcoder | Сайты, поддержка, исправления"
+      : "Anton Webcoder | Websites, support, fixes";
+    renderSelects();
+    renderFilters();
+    renderProjects();
+    if (caseModal.classList.contains("open")) openCase(activeProject.id);
+  };
+  const renderProjects = () => {
+    const visible = activeCategory === "All" ? projects : projects.filter((project) => project.category === activeCategory);
+    grid.innerHTML = visible.map((project) => `
+      <article class="project-card reactive reveal in">
+        <button class="project-media" type="button" data-case="${project.id}" aria-label="Open ${project.name} case">
+          <img src="${project.image}" alt="${project.name} preview" loading="lazy" onerror="this.classList.add('is-broken')">
+        </button>
+        <div class="project-body">
+          <h3>${project.name}</h3>
+          <p>${project.desc[currentLang]}</p>
+          <div class="tag-row">${project.tags[currentLang].map((tag) => `<span class="tag">${tag}</span>`).join("")}</div>
+          <div class="project-actions">
+            <a class="case-link primary" href="${project.live}" target="_blank" rel="noreferrer">${t("openDemo")}</a>
+            <button class="case-link" type="button" data-case="${project.id}">${currentLang === "ru" ? "Подробнее" : "Case details"}</button>
+          </div>
+        </div>
+      </article>`).join("");
+  };
+  const openCase = (id) => {
+    activeProject = projects.find((project) => project.id === id) || projects[0];
+    document.getElementById("caseTitle").textContent = activeProject.name;
+    document.getElementById("caseSubtitle").textContent = `${activeProject.type} case study`;
+    const caseImage = document.getElementById("caseImage");
+    caseImage.src = activeProject.image;
+    caseImage.alt = `${activeProject.name} preview`;
+    caseImage.classList.remove("is-broken");
+    document.getElementById("caseName").textContent = activeProject.name;
+    document.getElementById("caseDesc").textContent = activeProject.desc[currentLang];
+    document.getElementById("caseType").textContent = activeProject.type;
+    document.getElementById("caseValue").textContent = activeProject.value;
+    document.getElementById("caseLive").href = activeProject.live;
+    caseModal.classList.add("open");
+  };
+  const closeModals = () => {
+    caseModal.classList.remove("open");
+    contactModal.classList.remove("open");
+  };
+  const openContact = () => {
+    contactModal.classList.add("open");
+    mobileMenu.classList.remove("open");
+    setTimeout(() => contactForm.querySelector("input").focus(), 120);
+  };
+
+  applyLanguage();
+
+  document.addEventListener("click", (event) => {
+    const filter = event.target.closest("[data-filter]");
+    const caseButton = event.target.closest("[data-case]");
+    if (filter) {
+      activeCategory = filter.dataset.filter;
+      renderFilters();
+      renderProjects();
+      showToast(`${activeCategory === "All" ? t("all") : t("categories")[activeCategory]} ${currentLang === "ru" ? "проекты" : "projects"}`);
+    }
+    if (caseButton) openCase(caseButton.dataset.case);
+  });
+  document.querySelectorAll("[data-open-contact]").forEach((button) => button.addEventListener("click", openContact));
+  document.querySelectorAll("[data-close-modal]").forEach((button) => button.addEventListener("click", closeModals));
+  document.querySelectorAll(".modal").forEach((modal) => modal.addEventListener("click", (event) => {
+    if (event.target === modal) closeModals();
+  }));
+  document.querySelectorAll("[data-menu-toggle]").forEach((button) => {
+    button.addEventListener("click", () => mobileMenu.classList.toggle("open"));
+  });
+  mobileMenu.querySelectorAll("a").forEach((link) => link.addEventListener("click", () => mobileMenu.classList.remove("open")));
+  const toggleTheme = () => {
+    body.dataset.theme = body.dataset.theme === "dark" ? "light" : "dark";
+    showToast(body.dataset.theme === "dark" ? t("themeDark") : t("themeLight"));
+  };
+  document.querySelectorAll("[data-theme-toggle]").forEach((button) => button.addEventListener("click", toggleTheme));
+  const switchLanguage = () => {
+    currentLang = currentLang === "en" ? "ru" : "en";
+    applyLanguage();
+    showToast(currentLang === "ru" ? "Русская версия включена" : "English version enabled");
+  };
+  document.getElementById("langToggle").addEventListener("click", switchLanguage);
+  document.querySelectorAll("[data-lang-switch]").forEach((button) => button.addEventListener("click", switchLanguage));
+  document.getElementById("copyEmail").addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT_EMAIL);
+      showToast(t("copiedEmail"));
+    } catch (error) {
+      showToast(CONTACT_EMAIL);
+    }
+  });
+  document.getElementById("copyCase").addEventListener("click", async () => {
+    const demoUrl = new URL(activeProject.live, location.href).href;
+    const text = `${activeProject.name}: ${activeProject.desc[currentLang]} Live demo: ${demoUrl}`;
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast(t("copiedCase"));
+    } catch (error) {
+      showToast("Copy unavailable");
+    }
+  });
+  contactForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(contactForm).entries());
+    const subject = encodeURIComponent(`Portfolio request: ${data.type}`);
+    const bodyText = encodeURIComponent(`Name: ${data.name}\nEmail: ${data.email}\nType: ${data.type}\nBudget: ${data.budget || "Not specified"}\nLanguage: ${currentLang}\n\nBrief:\n${data.brief}`);
+    if (FORM_ENDPOINT) {
+      try {
+        showToast(t("sending"));
+        const response = await fetch(FORM_ENDPOINT, {
+          method:"POST",
+          headers:{"Content-Type":"application/json","Accept":"application/json"},
+          body:JSON.stringify({...data,_subject:"New website request from Anton Webcoder portfolio",language:currentLang})
+        });
+        if (!response.ok) throw new Error("Request failed");
+        showToast(t("sent"));
+        contactForm.reset();
+        renderSelects();
+        closeModals();
+        return;
+      } catch (error) {
+        showToast(t("endpointFailed"));
+      }
+    } else {
+      showToast(t("fallback"));
+    }
+    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${bodyText}`;
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      closeModals();
+      mobileMenu.classList.remove("open");
+    }
+  });
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add("in");
+        observer.unobserve(entry.target);
+      }
+    });
+  }, {threshold:.14});
+  document.querySelectorAll(".reveal").forEach((element) => observer.observe(element));
+
+  const resizeCanvas = () => {
+    if (!ctx) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cursorCanvas.width = Math.floor(innerWidth * dpr);
+    cursorCanvas.height = Math.floor(innerHeight * dpr);
+    cursorCanvas.style.width = `${innerWidth}px`;
+    cursorCanvas.style.height = `${innerHeight}px`;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  };
+  const addParticle = (x, y, speed) => {
+    if (!ctx || reduceMotion || innerWidth < 860) return;
+    const count = Math.min(4, 1 + Math.floor(speed / 24));
+    for (let i = 0; i < count; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const force = .2 + Math.random() * 1.15 + speed / 100;
+      const hue = Math.random() > .55 ? "159,199,255" : "168,241,210";
+      particles.push({x,y,vx:Math.cos(angle)*force,vy:Math.sin(angle)*force,life:1,size:1.2 + Math.random()*2.1,hue});
+    }
+    if (particles.length > 130) particles.splice(0, particles.length - 130);
+  };
+  const drawParticles = () => {
+    if (!ctx) return;
+    ctx.clearRect(0,0,innerWidth,innerHeight);
+    particles = particles.filter((p) => p.life > .02);
+    particles.forEach((p) => {
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vx *= .985;
+      p.vy *= .985;
+      p.life *= .94;
+      ctx.beginPath();
+      ctx.fillStyle = `rgba(${p.hue},${p.life * .7})`;
+      ctx.shadowColor = `rgba(${p.hue},${p.life * .42})`;
+      ctx.shadowBlur = 9;
+      ctx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    });
+    requestAnimationFrame(drawParticles);
+  };
+  const updateReactive = (x, y) => {
+    document.querySelectorAll(".reactive").forEach((element) => {
+      const rect = element.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = x - cx;
+      const dy = y - cy;
+      const dist = Math.hypot(dx, dy);
+      const radius = Math.max(rect.width, rect.height) * 2.9;
+      const strength = Math.max(0, 1 - dist / radius);
+      if (strength <= 0) {
+        element.style.setProperty("--shine", "0");
+        element.style.setProperty("--tiltX", "0deg");
+        element.style.setProperty("--tiltY", "0deg");
+        element.classList.remove("is-reacting");
+        return;
+      }
+      element.style.setProperty("--rx", `${(((x - rect.left) / rect.width) * 100).toFixed(1)}%`);
+      element.style.setProperty("--ry", `${(((y - rect.top) / rect.height) * 100).toFixed(1)}%`);
+      element.style.setProperty("--shine", Math.min(1, strength + pointer.speed / 120).toFixed(2));
+      element.style.setProperty("--tiltX", `${(-dy / Math.max(rect.height, 1) * 5 * strength).toFixed(2)}deg`);
+      element.style.setProperty("--tiltY", `${(dx / Math.max(rect.width, 1) * 5 * strength).toFixed(2)}deg`);
+      element.classList.add("is-reacting");
+    });
+  };
+  window.addEventListener("pointermove", (event) => {
+    const x = event.clientX;
+    const y = event.clientY;
+    pointer.speed = Math.hypot(x - pointer.px, y - pointer.py);
+    pointer.px = x;
+    pointer.py = y;
+    if (cursorDot) cursorDot.style.transform = `translate3d(${x - 5}px,${y - 5}px,0)`;
+    addParticle(x, y, pointer.speed);
+    updateReactive(x, y);
+  }, {passive:true});
+  window.addEventListener("pointerdown", () => cursorDot && cursorDot.classList.add("is-pressing"));
+  window.addEventListener("pointerup", () => cursorDot && cursorDot.classList.remove("is-pressing"));
+  window.addEventListener("resize", resizeCanvas);
+  resizeCanvas();
+  drawParticles();
+})();
+</script>
+</body>
+</html>

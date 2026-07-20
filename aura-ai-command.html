@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aura AI Command | Investor-ready SaaS dashboard demo</title>
+<meta name="description" content="Premium AI command center demo for a portfolio: dashboard, assistant, analytics, workflow states, command palette, and lead modal.">
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="16" fill="%2306080d"/><path d="M32 8l22 48H41l-4-10H25l-4 10H10L32 8zm0 15l-5 14h10l-5-14z" fill="%2374e0ff"/></svg>'>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#06080d;
+  --bg2:#0d111a;
+  --panel:#111722;
+  --panel2:#151c29;
+  --text:#f7fbff;
+  --muted:#8f9bac;
+  --line:rgba(226,236,255,.12);
+  --line2:rgba(226,236,255,.22);
+  --accent:#74e0ff;
+  --accent2:#8af7c6;
+  --violet:#9aa7ff;
+  --danger:#ff748a;
+  --warn:#f2c16b;
+  --shadow:rgba(0,0,0,.44);
+  --glass:rgba(255,255,255,.07);
+  --ease:cubic-bezier(.65,0,.14,1);
+  --font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+[data-theme="light"]{
+  color-scheme:light;
+  --bg:#eef4f8;
+  --bg2:#f9fcff;
+  --panel:#ffffff;
+  --panel2:#f4f8fb;
+  --text:#111722;
+  --muted:#617084;
+  --line:rgba(20,35,55,.12);
+  --line2:rgba(20,35,55,.22);
+  --shadow:rgba(35,57,83,.16);
+  --glass:rgba(255,255,255,.62);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  overflow-x:hidden;
+  background:
+    radial-gradient(circle at 12% 10%, color-mix(in srgb,var(--accent) 18%, transparent), transparent 28rem),
+    radial-gradient(circle at 82% 20%, color-mix(in srgb,var(--violet) 18%, transparent), transparent 30rem),
+    radial-gradient(circle at 48% 88%, color-mix(in srgb,var(--accent2) 12%, transparent), transparent 36rem),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+  color:var(--text);
+  font-family:var(--font);
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+  transition:background 700ms var(--ease),color 700ms var(--ease);
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-2;
+  pointer-events:none;
+  opacity:.34;
+  background:
+    linear-gradient(90deg, color-mix(in srgb,var(--text) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(180deg, color-mix(in srgb,var(--text) 3%, transparent) 1px, transparent 1px);
+  background-size:72px 72px;
+  mask-image:radial-gradient(circle at 50% 28%,#000,transparent 72%);
+}
+body::after{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background:radial-gradient(ellipse at 50% 20%, transparent 45%, rgba(0,0,0,.32));
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent);color:#051016}
+
+.loader{
+  position:fixed;
+  inset:0;
+  z-index:9000;
+  display:grid;
+  place-items:center;
+  background:
+    radial-gradient(circle at 50% 40%, color-mix(in srgb,var(--accent) 16%, transparent), transparent 22rem),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+  transition:opacity 700ms var(--ease),visibility 700ms;
+}
+.loader.is-hidden{opacity:0;visibility:hidden}
+.loader-card{
+  width:min(520px,calc(100% - 36px));
+  border:1px solid var(--line2);
+  border-radius:28px;
+  padding:30px;
+  background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.035)),var(--glass);
+  backdrop-filter:blur(28px) saturate(160%);
+  box-shadow:0 40px 120px var(--shadow),inset 0 1px 0 rgba(255,255,255,.16);
+}
+.loader-mark{display:flex;align-items:center;gap:14px;font-size:.78rem;font-weight:850;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.mark{
+  position:relative;
+  width:38px;height:38px;border-radius:14px;
+  display:grid;place-items:center;
+  background:conic-gradient(from 180deg,var(--accent),var(--accent2),var(--violet),var(--accent));
+  color:#041017;font-weight:950;
+  box-shadow:0 0 50px color-mix(in srgb,var(--accent) 35%, transparent);
+}
+.glass-reactive{
+  --rx:50%;
+  --ry:50%;
+  --shine:0;
+  position:relative;
+  isolation:isolate;
+  overflow:hidden;
+  transition-property:filter,box-shadow,border-color,background;
+  transition-duration:260ms;
+  transition-timing-function:var(--ease);
+}
+.glass-reactive::before,
+.glass-reactive::after{
+  content:"";
+  position:absolute;
+  inset:-1px;
+  z-index:2;
+  pointer-events:none;
+  border-radius:inherit;
+  opacity:0;
+  transition-property:opacity,transform;
+  transition-duration:220ms;
+  transition-timing-function:var(--ease);
+}
+.glass-reactive::before{
+  background:
+    radial-gradient(circle at var(--rx) var(--ry), rgba(255,255,255,.82), rgba(255,255,255,.26) 13%, transparent 34%),
+    radial-gradient(circle at calc(var(--rx) + 18%) calc(var(--ry) + 12%), color-mix(in srgb,var(--accent2) 48%, transparent), transparent 28%);
+  mix-blend-mode:screen;
+  opacity:calc(.12 + var(--shine) * .72);
+}
+.glass-reactive::after{
+  inset:-40%;
+  background:linear-gradient(112deg, transparent 35%, rgba(255,255,255,.72), transparent 56%);
+  transform:translateX(calc((var(--rx) - 50%) * .18)) rotate(12deg);
+  mix-blend-mode:screen;
+  opacity:calc(.04 + var(--shine) * .38);
+}
+.glass-reactive.is-reacting{
+  filter:saturate(calc(1 + var(--shine) * .55)) brightness(calc(1 + var(--shine) * .18));
+  box-shadow:
+    0 18px 70px color-mix(in srgb,var(--accent) calc(18% + var(--shine) * 24%), transparent),
+    inset 0 1px 0 rgba(255,255,255,.26),
+    inset 0 -18px 35px rgba(255,255,255,.035);
+}
+.loadbar{height:6px;margin-top:28px;border-radius:999px;background:var(--line);overflow:hidden}
+.loadbar span{display:block;height:100%;width:38%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2),var(--violet));animation:load 1400ms var(--ease) infinite}
+
+.app-shell{
+  width:min(100% - 28px,1480px);
+  min-height:calc(100dvh - 28px);
+  margin:14px auto;
+  display:grid;
+  grid-template-columns:280px minmax(0,1fr) 360px;
+  gap:14px;
+}
+.sidebar,.topbar,.panel,.assistant,.modal-card,.command-card{
+  border:1px solid var(--line);
+  background:linear-gradient(135deg,rgba(255,255,255,.11),rgba(255,255,255,.032)),var(--glass);
+  backdrop-filter:blur(24px) saturate(155%);
+  -webkit-backdrop-filter:blur(24px) saturate(155%);
+  box-shadow:0 24px 80px var(--shadow),inset 0 1px 0 rgba(255,255,255,.12);
+}
+.sidebar{
+  position:sticky;
+  top:14px;
+  height:calc(100dvh - 28px);
+  border-radius:28px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.brand{display:flex;align-items:center;gap:12px;padding:4px 2px 22px}
+.brand-text strong{display:block;letter-spacing:.08em}
+.brand-text span{display:block;color:var(--muted);font-size:.76rem;margin-top:3px}
+.navlist{display:grid;gap:8px;margin-top:6px}
+.navbtn{
+  width:100%;
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  border:0;
+  border-radius:16px;
+  padding:0 14px;
+  background:transparent;
+  color:var(--muted);
+  font-size:.9rem;
+  font-weight:760;
+  text-align:left;
+  transition:background 240ms var(--ease),color 240ms var(--ease),transform 240ms var(--ease);
+}
+.navbtn:hover,.navbtn.active{background:color-mix(in srgb,var(--accent) 12%, transparent);color:var(--text)}
+.navbtn:active{transform:scale(.985)}
+.navbtn i{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.45}
+.sidebar-foot{margin-top:auto;border-top:1px solid var(--line);padding-top:16px}
+.health{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:12px;
+  align-items:center;
+  padding:14px;
+  border-radius:18px;
+  background:color-mix(in srgb,var(--accent2) 9%, transparent);
+}
+.pulse{width:12px;height:12px;border-radius:50%;background:var(--accent2);box-shadow:0 0 0 0 color-mix(in srgb,var(--accent2) 42%, transparent);animation:pulse 1800ms ease-out infinite}
+.health b{display:block;font-size:.86rem}
+.health span{display:block;color:var(--muted);font-size:.76rem;margin-top:2px}
+
+.main{display:grid;grid-template-rows:auto 1fr;gap:14px;min-width:0}
+.topbar{
+  position:sticky;
+  top:14px;
+  z-index:100;
+  height:74px;
+  border-radius:24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+  padding:0 16px 0 22px;
+}
+.page-title h1{margin:0;font-size:1.1rem;letter-spacing:-.02em}
+.page-title p{margin:4px 0 0;color:var(--muted);font-size:.82rem}
+.top-actions{display:flex;align-items:center;gap:10px}
+.glass-btn{
+  min-height:42px;
+  border:1px solid var(--line);
+  border-radius:999px;
+  padding:0 14px;
+  color:var(--text);
+  background:rgba(255,255,255,.055);
+  font-size:.82rem;
+  font-weight:800;
+  transition:transform 240ms var(--ease),border-color 240ms var(--ease),background 240ms var(--ease);
+}
+.glass-btn:hover{border-color:color-mix(in srgb,var(--accent) 42%, var(--line));background:color-mix(in srgb,var(--accent) 10%, transparent);transform:translateY(-1px)}
+.theme-toggle{width:78px;padding:4px;display:flex;align-items:center;justify-content:flex-start}
+.theme-toggle span{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));transition:transform 500ms var(--ease),filter 260ms var(--ease),box-shadow 260ms var(--ease)}
+[data-theme="light"] .theme-toggle span{transform:translateX(34px)}
+
+.screen{display:none;animation:screenIn 560ms var(--ease) both}
+.screen.active{display:block}
+.grid{display:grid;gap:14px}
+.overview-grid{grid-template-columns:repeat(12,minmax(0,1fr))}
+.panel{
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  padding:20px;
+}
+.panel::before{
+  content:"";
+  position:absolute;inset:0;
+  pointer-events:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.09),transparent 34%,color-mix(in srgb,var(--accent) 8%, transparent));
+}
+.panel>*{position:relative}
+.hero-panel{grid-column:span 8;min-height:330px;display:grid;align-content:space-between}
+.hero-panel h2{max-width:11ch;margin:0;font-size:clamp(3rem,5.6vw,5.8rem);line-height:.88;letter-spacing:-.07em}
+.gradient-text{color:transparent;background:linear-gradient(110deg,var(--accent),var(--accent2),var(--violet),var(--accent));background-size:220% 100%;-webkit-background-clip:text;background-clip:text;animation:flow 4500ms ease-in-out infinite}
+.hero-panel p{max-width:560px;color:var(--muted);line-height:1.6}
+.hero-foot{display:flex;flex-wrap:wrap;gap:10px}
+.primary{
+  border:0;
+  color:#031016;
+  background:linear-gradient(110deg,var(--accent),var(--accent2),var(--violet));
+  background-size:220% 100%;
+  animation:flow 5s ease-in-out infinite;
+  box-shadow:0 18px 60px color-mix(in srgb,var(--accent) 24%, transparent);
+}
+.risk-panel{grid-column:span 4;min-height:330px}
+.score{
+  width:210px;height:210px;margin:20px auto 10px;border-radius:50%;
+  display:grid;place-items:center;
+  background:conic-gradient(var(--accent2) 0 78%, var(--line) 78% 100%);
+  box-shadow:inset 0 0 0 14px color-mix(in srgb,var(--panel) 88%, transparent),0 0 70px color-mix(in srgb,var(--accent2) 18%, transparent);
+}
+.score span{width:150px;height:150px;border-radius:50%;display:grid;place-items:center;background:var(--panel);font-size:3rem;font-weight:900}
+.metric-card{grid-column:span 3;min-height:168px}
+.metric-card small,.panel-label{display:block;color:var(--muted);font-size:.76rem;font-weight:850;letter-spacing:.12em;text-transform:uppercase}
+.metric-card strong{display:block;margin-top:18px;font-size:2.35rem;letter-spacing:-.05em}
+.metric-card em{display:inline-flex;margin-top:10px;color:var(--accent2);font-style:normal;font-weight:800}
+.chart-panel{grid-column:span 7;min-height:350px}
+.segments-panel{grid-column:span 5;min-height:350px}
+.chart{width:100%;height:230px;margin-top:18px}
+.chart path.line{fill:none;stroke:url(#chartGrad);stroke-width:4;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 8px 18px color-mix(in srgb,var(--accent) 30%, transparent))}
+.chart path.area{fill:url(#areaGrad);opacity:.48}
+.bar-list{display:grid;gap:14px;margin-top:24px}
+.bar-row{display:grid;grid-template-columns:90px 1fr 48px;gap:12px;align-items:center;color:var(--muted);font-size:.86rem}
+.bar{height:10px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar span{display:block;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--accent),var(--accent2));transform-origin:left;animation:grow 900ms var(--ease) both}
+
+.assistant{
+  position:sticky;
+  top:14px;
+  height:calc(100dvh - 28px);
+  border-radius:28px;
+  padding:18px;
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  overflow:hidden;
+}
+.assistant-head{display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding-bottom:16px}
+.assistant-head h2{margin:0;font-size:1rem}
+.assistant-head span{color:var(--accent2);font-size:.76rem;font-weight:850}
+.chat{display:flex;flex-direction:column;gap:12px;overflow:auto;padding:16px 2px}
+.bubble{max-width:92%;padding:13px 14px;border:1px solid var(--line);border-radius:18px;background:rgba(255,255,255,.045);color:var(--muted);line-height:1.5;font-size:.9rem}
+.bubble.ai{align-self:flex-start;color:var(--text);background:color-mix(in srgb,var(--accent) 9%, transparent)}
+.bubble.user{align-self:flex-end}
+.assistant-actions{display:grid;gap:10px;border-top:1px solid var(--line);padding-top:14px}
+.prompt-row{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1px solid var(--line);border-radius:999px;background:transparent;color:var(--muted);padding:8px 10px;font-size:.76rem;font-weight:760}
+.chip:hover{color:var(--text);border-color:var(--accent)}
+.ask{display:grid;grid-template-columns:1fr auto;gap:8px}
+.ask input{min-width:0;border:1px solid var(--line);border-radius:14px;background:rgba(255,255,255,.055);color:var(--text);padding:12px;outline:none}
+.ask input:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 14%, transparent)}
+
+.table-panel,.workflow-panel,.agents-panel{min-height:560px}
+.data-table{width:100%;border-collapse:collapse;margin-top:20px}
+.data-table th,.data-table td{padding:16px 12px;border-bottom:1px solid var(--line);text-align:left}
+.data-table th{color:var(--muted);font-size:.76rem;text-transform:uppercase;letter-spacing:.12em}
+.status{display:inline-flex;border-radius:999px;padding:6px 9px;font-size:.76rem;font-weight:850}
+.status.good{background:color-mix(in srgb,var(--accent2) 14%, transparent);color:var(--accent2)}
+.status.warn{background:color-mix(in srgb,var(--warn) 14%, transparent);color:var(--warn)}
+.status.danger{background:color-mix(in srgb,var(--danger) 14%, transparent);color:var(--danger)}
+.workflow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:20px}
+.lane{min-height:410px;border:1px solid var(--line);border-radius:20px;padding:14px;background:rgba(255,255,255,.035)}
+.lane h3{margin:0 0 14px;font-size:.86rem;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.task{border:1px solid var(--line);border-radius:16px;padding:13px;margin-bottom:10px;background:var(--panel2)}
+.task b{display:block;margin-bottom:8px}.task span{color:var(--muted);font-size:.82rem}
+.agent-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:20px}
+.agent{min-height:240px;border:1px solid var(--line);border-radius:22px;padding:18px;background:rgba(255,255,255,.04)}
+.agent-orb{width:68px;height:68px;border-radius:24px;background:conic-gradient(from 180deg,var(--accent),var(--accent2),var(--violet),var(--accent));box-shadow:0 18px 60px color-mix(in srgb,var(--accent) 22%, transparent);animation:float 4s ease-in-out infinite}
+.agent h3{margin:22px 0 8px}.agent p{margin:0;color:var(--muted);line-height:1.55}
+
+.modal,.command{
+  position:fixed;inset:0;z-index:7000;
+  display:grid;place-items:center;
+  padding:20px;
+  opacity:0;visibility:hidden;
+  background:rgba(0,0,0,.54);
+  backdrop-filter:blur(18px);
+  transition:opacity 280ms ease,visibility 280ms;
+}
+.modal.is-open,.command.is-open{opacity:1;visibility:visible}
+.modal-card,.command-card{width:min(100%,620px);max-height:calc(100dvh - 40px);overflow:auto;border-radius:28px;padding:26px}
+.modal-head{display:flex;align-items:start;justify-content:space-between;gap:18px}
+.modal h2{margin:0;font-size:2rem;letter-spacing:-.04em}
+.close{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:var(--glass);color:var(--text)}
+.lead-form{display:grid;gap:12px;margin-top:22px}
+.lead-form label{display:grid;gap:7px;color:var(--muted);font-size:.76rem;font-weight:850;letter-spacing:.1em;text-transform:uppercase}
+.lead-form input,.lead-form textarea{width:100%;border:1px solid var(--line);border-radius:15px;background:rgba(255,255,255,.055);color:var(--text);padding:14px;outline:none}
+.lead-form textarea{min-height:116px;resize:vertical}
+.lead-form input:focus,.lead-form textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 14%, transparent)}
+.command-card{padding:12px}
+.command input{width:100%;height:58px;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);padding:0 16px;font-size:1rem;outline:none}
+.command-list{display:grid;gap:6px;padding:10px}
+.command-item{display:flex;align-items:center;justify-content:space-between;border:0;border-radius:14px;background:transparent;color:var(--text);padding:14px;text-align:left}
+.command-item:hover{background:color-mix(in srgb,var(--accent) 10%, transparent)}
+.toast{position:fixed;left:50%;bottom:20px;z-index:7600;transform:translate(-50%,28px);opacity:0;border:1px solid var(--line);border-radius:999px;background:var(--panel);box-shadow:0 18px 60px var(--shadow);padding:12px 16px;transition:opacity 260ms,transform 260ms}
+.toast.is-live{opacity:1;transform:translate(-50%,0)}
+
+@keyframes load{0%{transform:translateX(-100%)}60%,100%{transform:translateX(260%)}}
+@keyframes pulse{to{box-shadow:0 0 0 18px transparent}}
+@keyframes flow{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes screenIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes grow{from{transform:scaleX(.1)}to{transform:scaleX(1)}}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+@media(max-width:1180px){
+  .app-shell{grid-template-columns:92px minmax(0,1fr);padding-bottom:14px}
+  .sidebar{padding:14px}.brand-text,.navbtn span,.sidebar-foot{display:none}.navbtn{justify-content:center}.assistant{grid-column:1 / -1;height:auto;min-height:430px;position:relative;top:auto}
+}
+@media(max-width:760px){
+  body::before{background-size:48px 48px}
+  .app-shell{width:calc(100% - 18px);margin:9px auto;grid-template-columns:1fr}
+  .sidebar{position:fixed;left:9px;right:9px;bottom:9px;top:auto;z-index:800;height:68px;border-radius:22px;display:block;padding:8px}
+  .brand{display:none}.navlist{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin:0}.navbtn{min-height:52px;padding:0 4px;border-radius:15px;justify-content:center;font-size:.66rem}.navbtn span{display:block}.navbtn i{display:none}
+  .topbar{top:9px;height:auto;min-height:66px;border-radius:22px;align-items:flex-start}.top-actions{flex-wrap:wrap;justify-content:flex-end}.hide-mobile{display:none}
+  .overview-grid,.workflow,.agent-grid{grid-template-columns:1fr}
+  .hero-panel,.risk-panel,.metric-card,.chart-panel,.segments-panel{grid-column:auto}
+  .hero-panel h2{font-size:clamp(3rem,16vw,4.8rem)}
+  .score{width:180px;height:180px}.score span{width:126px;height:126px}
+  .workflow{gap:10px}.lane{min-height:auto}
+  .data-table{display:block;overflow:auto;white-space:nowrap}
+  .assistant{margin-bottom:82px}
+  .modal,.command{place-items:start center;padding:12px}.modal-card,.command-card{max-height:none;border-radius:22px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:1ms!important;animation-iteration-count:1!important;transition-duration:1ms!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body data-theme="dark">
+<div class="loader" id="loader">
+  <div class="loader-card">
+    <div class="loader-mark"><span class="mark glass-reactive">A</span><span>Aura AI Command</span></div>
+    <div class="loadbar"><span></span></div>
+  </div>
+</div>
+
+<div class="app-shell">
+  <aside class="sidebar">
+    <div class="brand"><span class="mark glass-reactive">A</span><div class="brand-text"><strong>Aura AI Command</strong><span>Enterprise intelligence OS</span></div></div>
+    <nav class="navlist" aria-label="Dashboard navigation">
+      <button class="navbtn active" data-screen="overview"><span>Overview</span><i class="glass-reactive"></i></button>
+      <button class="navbtn" data-screen="revenue"><span>Revenue</span><i class="glass-reactive"></i></button>
+      <button class="navbtn" data-screen="customers"><span>Customers</span><i class="glass-reactive"></i></button>
+      <button class="navbtn" data-screen="agents"><span>Agents</span><i class="glass-reactive"></i></button>
+      <button class="navbtn" data-screen="workflow"><span>Workflow</span><i class="glass-reactive"></i></button>
+    </nav>
+    <div class="sidebar-foot"><div class="health"><span class="pulse glass-reactive"></span><div><b>Systems live</b><span>99.98% confidence</span></div></div></div>
+  </aside>
+
+  <main class="main">
+    <header class="topbar">
+      <div class="page-title"><h1 id="screenTitle">Executive overview</h1><p>Live model reads from revenue, pipeline, risk and customer behavior.</p></div>
+      <div class="top-actions">
+        <button class="glass-btn hide-mobile" id="commandBtn">Command K</button>
+        <button class="glass-btn theme-toggle" id="themeBtn" aria-label="Toggle theme"><span class="glass-reactive"></span></button>
+        <button class="glass-btn primary" data-open-modal>Request demo</button>
+      </div>
+    </header>
+
+    <section class="screen active" id="overview">
+      <div class="grid overview-grid">
+        <article class="panel hero-panel">
+          <div>
+            <span class="panel-label">Aura Forecast</span>
+            <h2>AI command layer for <span class="gradient-text">high-stakes</span> growth.</h2>
+            <p>A premium SaaS dashboard demo that turns scattered signals into board-ready decisions.</p>
+          </div>
+          <div class="hero-foot"><button class="glass-btn primary" data-open-modal>Book walkthrough</button><button class="glass-btn" data-screen-link="agents">Inspect agents</button></div>
+        </article>
+        <article class="panel risk-panel">
+          <span class="panel-label">Opportunity score</span>
+          <div class="score"><span>92</span></div>
+          <p style="color:var(--muted);line-height:1.55">Expansion likelihood is strongest in enterprise accounts with 3+ active workflows.</p>
+        </article>
+        <article class="panel metric-card"><small>ARR forecast</small><strong>$4.82M</strong><em>+18.4%</em></article>
+        <article class="panel metric-card"><small>Pipeline</small><strong>$890K</strong><em>+31 deals</em></article>
+        <article class="panel metric-card"><small>Churn risk</small><strong>3.8%</strong><em style="color:var(--accent)">stable</em></article>
+        <article class="panel metric-card"><small>AI actions</small><strong>1,284</strong><em>today</em></article>
+        <article class="panel chart-panel">
+          <span class="panel-label">Revenue intelligence</span>
+          <svg class="chart" viewBox="0 0 720 230" role="img" aria-label="Revenue trend chart">
+            <defs><linearGradient id="chartGrad" x1="0" x2="1"><stop stop-color="#74e0ff"/><stop offset=".55" stop-color="#8af7c6"/><stop offset="1" stop-color="#9aa7ff"/></linearGradient><linearGradient id="areaGrad" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#74e0ff" stop-opacity=".38"/><stop offset="1" stop-color="#74e0ff" stop-opacity="0"/></linearGradient></defs>
+            <path class="area" d="M20 178 C90 150 120 112 178 128 C235 144 260 88 320 96 C386 106 408 54 470 68 C540 84 584 38 700 42 L700 220 L20 220 Z"></path>
+            <path class="line" d="M20 178 C90 150 120 112 178 128 C235 144 260 88 320 96 C386 106 408 54 470 68 C540 84 584 38 700 42"></path>
+          </svg>
+        </article>
+        <article class="panel segments-panel">
+          <span class="panel-label">Customer segments</span>
+          <div class="bar-list">
+            <div class="bar-row"><span>Enterprise</span><div class="bar"><span style="width:86%"></span></div><b>86%</b></div>
+            <div class="bar-row"><span>Mid-market</span><div class="bar"><span style="width:64%"></span></div><b>64%</b></div>
+            <div class="bar-row"><span>Startup</span><div class="bar"><span style="width:42%"></span></div><b>42%</b></div>
+            <div class="bar-row"><span>At risk</span><div class="bar"><span style="width:18%;background:linear-gradient(90deg,var(--warn),var(--danger))"></span></div><b>18%</b></div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section class="screen" id="revenue">
+      <article class="panel table-panel">
+        <span class="panel-label">Revenue command</span>
+        <table class="data-table"><thead><tr><th>Account</th><th>Stage</th><th>Value</th><th>Signal</th><th>Status</th></tr></thead><tbody>
+          <tr><td>Northstar Bank</td><td>Expansion</td><td>$180K</td><td>12 active champions</td><td><span class="status good">Accelerate</span></td></tr>
+          <tr><td>Helio Grid</td><td>Security review</td><td>$94K</td><td>Procurement delay</td><td><span class="status warn">Watch</span></td></tr>
+          <tr><td>Vera Health</td><td>Pilot</td><td>$72K</td><td>High feature adoption</td><td><span class="status good">Upsell</span></td></tr>
+          <tr><td>Arc Shipping</td><td>Renewal</td><td>$61K</td><td>Usage drop in ops team</td><td><span class="status danger">Intervene</span></td></tr>
+        </tbody></table>
+      </article>
+    </section>
+
+    <section class="screen" id="customers">
+      <article class="panel table-panel">
+        <span class="panel-label">Customer intelligence</span>
+        <table class="data-table"><thead><tr><th>Segment</th><th>Accounts</th><th>Health</th><th>Next best action</th></tr></thead><tbody>
+          <tr><td>Enterprise AI teams</td><td>42</td><td><span class="status good">94%</span></td><td>Offer governance add-on</td></tr>
+          <tr><td>Operations platforms</td><td>31</td><td><span class="status good">88%</span></td><td>Trigger workflow audit</td></tr>
+          <tr><td>Fintech risk teams</td><td>18</td><td><span class="status warn">72%</span></td><td>Schedule compliance review</td></tr>
+          <tr><td>Legacy migration</td><td>12</td><td><span class="status danger">58%</span></td><td>Assign human CSM</td></tr>
+        </tbody></table>
+      </article>
+    </section>
+
+    <section class="screen" id="agents">
+      <article class="panel agents-panel">
+        <span class="panel-label">AI agent mesh</span>
+        <div class="agent-grid">
+          <div class="agent"><div class="agent-orb glass-reactive"></div><h3>Revenue Scout</h3><p>Finds expansion moments and drafts account-specific action plans.</p></div>
+          <div class="agent"><div class="agent-orb glass-reactive"></div><h3>Risk Sentinel</h3><p>Monitors usage decay, executive silence, procurement delay and churn signals.</p></div>
+          <div class="agent"><div class="agent-orb glass-reactive"></div><h3>Board Narrator</h3><p>Turns raw metrics into investor updates with proof, context and next moves.</p></div>
+        </div>
+      </article>
+    </section>
+
+    <section class="screen" id="workflow">
+      <article class="panel workflow-panel">
+        <span class="panel-label">Autonomous workflow</span>
+        <div class="workflow">
+          <div class="lane"><h3>Signal</h3><div class="task"><b>Usage spike</b><span>Northstar activated 4 new teams</span></div><div class="task"><b>Risk drift</b><span>Arc ops dropped below baseline</span></div></div>
+          <div class="lane"><h3>Reason</h3><div class="task"><b>Expansion fit</b><span>Champion count crossed threshold</span></div><div class="task"><b>Renewal risk</b><span>Executive sponsor inactive</span></div></div>
+          <div class="lane"><h3>Action</h3><div class="task"><b>Draft plan</b><span>Generate account brief and email</span></div><div class="task"><b>Escalate</b><span>Assign CSM with rescue playbook</span></div></div>
+          <div class="lane"><h3>Outcome</h3><div class="task"><b>Pipeline</b><span>$180K expansion opened</span></div><div class="task"><b>Retention</b><span>Renewal risk reduced 22%</span></div></div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <aside class="assistant">
+    <div class="assistant-head"><h2>Aura Copilot</h2><span>online</span></div>
+    <div class="chat" id="chat">
+      <div class="bubble ai">I found 3 expansion opportunities and 1 renewal risk that needs a human follow-up.</div>
+      <div class="bubble user">Prioritize by revenue impact.</div>
+      <div class="bubble ai">Northstar Bank should move first. The account has $180K expansion potential and rising executive engagement.</div>
+    </div>
+    <div class="assistant-actions">
+      <div class="prompt-row"><button class="chip" data-prompt="Summarize risks">Summarize risks</button><button class="chip" data-prompt="Draft board update">Board update</button><button class="chip" data-prompt="Find upsells">Find upsells</button></div>
+      <form class="ask" id="askForm"><input id="askInput" placeholder="Ask Aura anything"><button class="glass-btn primary" type="submit">Ask</button></form>
+    </div>
+  </aside>
+</div>
+
+<div class="modal" id="leadModal" role="dialog" aria-modal="true" aria-labelledby="leadTitle">
+  <div class="modal-card">
+    <div class="modal-head"><div><span class="panel-label">Investor-ready demo</span><h2 id="leadTitle">Request Aura walkthrough.</h2><p style="color:var(--muted);line-height:1.55">This standalone demo prepares an email. Add FORM_ENDPOINT for silent delivery.</p></div><button class="close" id="closeModal" aria-label="Close modal">×</button></div>
+    <form class="lead-form" id="leadForm">
+      <label>Name<input required name="name" autocomplete="name" placeholder="Anton"></label>
+      <label>Email<input required type="email" name="email" autocomplete="email" placeholder="you@example.com"></label>
+      <label>Company<input name="company" placeholder="Aura Labs"></label>
+      <label>Brief<textarea required name="brief" placeholder="What kind of SaaS or AI demo do you need?"></textarea></label>
+      <button class="glass-btn primary" type="submit">Prepare email</button>
+    </form>
+  </div>
+</div>
+
+<div class="command" id="command">
+  <div class="command-card">
+    <input id="commandInput" placeholder="Type a command or screen name">
+    <div class="command-list">
+      <button class="command-item" data-command-screen="overview"><span>Open overview</span><b>1</b></button>
+      <button class="command-item" data-command-screen="revenue"><span>Open revenue</span><b>2</b></button>
+      <button class="command-item" data-command-screen="customers"><span>Open customers</span><b>3</b></button>
+      <button class="command-item" data-command-screen="agents"><span>Inspect AI agents</span><b>4</b></button>
+      <button class="command-item" data-command-modal><span>Request demo</span><b>↵</b></button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Ready</div>
+
+<script>
+const LEAD_EMAIL = "your-email@example.com";
+const FORM_ENDPOINT = "";
+const body = document.body;
+const loader = document.getElementById("loader");
+const navButtons = [...document.querySelectorAll(".navbtn")];
+const screens = [...document.querySelectorAll(".screen")];
+const screenTitle = document.getElementById("screenTitle");
+const titles = {overview:"Executive overview",revenue:"Revenue command",customers:"Customer intelligence",agents:"AI agent mesh",workflow:"Autonomous workflow"};
+const leadModal = document.getElementById("leadModal");
+const closeModal = document.getElementById("closeModal");
+const command = document.getElementById("command");
+const commandBtn = document.getElementById("commandBtn");
+const commandInput = document.getElementById("commandInput");
+const toast = document.getElementById("toast");
+const reactiveIcons = [...document.querySelectorAll(".glass-reactive")];
+const pointerState = {x: innerWidth / 2, y: innerHeight / 2, px: innerWidth / 2, py: innerHeight / 2, speed: 0, frame: 0, time: performance.now()};
+function updateReactiveIcons(){
+  pointerState.frame = 0;
+  reactiveIcons.forEach(icon => {
+    const rect = icon.getBoundingClientRect();
+    if(rect.width === 0 || rect.height === 0) return;
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    const dx = pointerState.x - cx;
+    const dy = pointerState.y - cy;
+    const distance = Math.hypot(dx, dy);
+    const range = Math.max(240, Math.min(innerWidth, innerHeight) * .42);
+    const localX = Math.max(0, Math.min(100, ((pointerState.x - rect.left) / rect.width) * 100));
+    const localY = Math.max(0, Math.min(100, ((pointerState.y - rect.top) / rect.height) * 100));
+    const proximity = Math.max(0, 1 - distance / range);
+    const shine = Math.min(1, proximity * .86 + pointerState.speed * .24);
+    icon.style.setProperty("--rx", `${localX}%`);
+    icon.style.setProperty("--ry", `${localY}%`);
+    icon.style.setProperty("--shine", shine.toFixed(3));
+    icon.classList.toggle("is-reacting", shine > .05);
+  });
+}
+document.addEventListener("pointermove", event => {
+  const now = performance.now();
+  const dt = Math.max(16, now - pointerState.time);
+  const distance = Math.hypot(event.clientX - pointerState.px, event.clientY - pointerState.py);
+  pointerState.speed = Math.min(1, distance / dt / 1.4);
+  pointerState.x = event.clientX;
+  pointerState.y = event.clientY;
+  pointerState.px = event.clientX;
+  pointerState.py = event.clientY;
+  pointerState.time = now;
+  if(!pointerState.frame) pointerState.frame = requestAnimationFrame(updateReactiveIcons);
+}, {passive:true});
+document.addEventListener("pointerleave", () => {
+  reactiveIcons.forEach(icon => {
+    icon.style.setProperty("--shine", "0");
+    icon.classList.remove("is-reacting");
+  });
+});
+setTimeout(()=>loader.classList.add("is-hidden"),900);
+function openScreen(id){
+  screens.forEach(s=>s.classList.toggle("active",s.id===id));
+  navButtons.forEach(b=>b.classList.toggle("active",b.dataset.screen===id));
+  screenTitle.textContent = titles[id] || "Aura AI Command";
+}
+navButtons.forEach(btn=>btn.addEventListener("click",()=>openScreen(btn.dataset.screen)));
+document.querySelectorAll("[data-screen-link]").forEach(btn=>btn.addEventListener("click",()=>openScreen(btn.dataset.screenLink)));
+document.getElementById("themeBtn").addEventListener("click",()=>{body.dataset.theme=body.dataset.theme==="dark"?"light":"dark";});
+function showToast(text){toast.textContent=text;toast.classList.add("is-live");setTimeout(()=>toast.classList.remove("is-live"),2200);}
+function openModal(){leadModal.classList.add("is-open");setTimeout(()=>leadModal.querySelector("input").focus(),180);}
+function closeLead(){leadModal.classList.remove("is-open");}
+document.querySelectorAll("[data-open-modal]").forEach(btn=>btn.addEventListener("click",openModal));
+closeModal.addEventListener("click",closeLead);
+leadModal.addEventListener("click",e=>{if(e.target===leadModal)closeLead();});
+function openCommand(){command.classList.add("is-open");setTimeout(()=>commandInput.focus(),120);}
+function closeCommand(){command.classList.remove("is-open");commandInput.value="";}
+commandBtn?.addEventListener("click",openCommand);
+document.addEventListener("keydown",e=>{if((e.metaKey||e.ctrlKey)&&e.key.toLowerCase()==="k"){e.preventDefault();openCommand();} if(e.key==="Escape"){closeCommand();closeLead();}});
+command.addEventListener("click",e=>{if(e.target===command)closeCommand();});
+document.querySelectorAll("[data-command-screen]").forEach(btn=>btn.addEventListener("click",()=>{openScreen(btn.dataset.commandScreen);closeCommand();}));
+document.querySelector("[data-command-modal]").addEventListener("click",()=>{closeCommand();openModal();});
+commandInput.addEventListener("input",()=>{const v=commandInput.value.toLowerCase();document.querySelectorAll(".command-item").forEach(item=>item.style.display=item.textContent.toLowerCase().includes(v)?"flex":"none");});
+const chat = document.getElementById("chat");
+const askForm = document.getElementById("askForm");
+const askInput = document.getElementById("askInput");
+function addBubble(text,type="ai"){const div=document.createElement("div");div.className=`bubble ${type}`;div.textContent=text;chat.appendChild(div);chat.scrollTop=chat.scrollHeight;}
+function answer(prompt){addBubble(prompt,"user");setTimeout(()=>addBubble(prompt.includes("risk")?"Highest risk: Arc Shipping. Usage dropped 31% and sponsor silence crossed the intervention threshold.":prompt.includes("board")?"Board update drafted: ARR forecast up 18.4%, expansion pipeline led by Northstar, churn risk stable at 3.8%.":"Top upsell: Northstar Bank, $180K expansion signal, 12 champions, high workflow density."),260);}
+document.querySelectorAll("[data-prompt]").forEach(btn=>btn.addEventListener("click",()=>answer(btn.dataset.prompt)));
+askForm.addEventListener("submit",e=>{e.preventDefault();const q=askInput.value.trim();if(!q)return;answer(q);askInput.value="";});
+document.getElementById("leadForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const data = new FormData(e.currentTarget);
+  const payload = {name:data.get("name"),email:data.get("email"),company:data.get("company")||"Not specified",brief:data.get("brief")};
+  if(FORM_ENDPOINT){
+    fetch(FORM_ENDPOINT,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(payload)}).then(()=>{showToast("Application sent");e.currentTarget.reset();closeLead();}).catch(()=>openMail(payload));
+  } else openMail(payload);
+});
+function openMail(payload){
+  const subject=encodeURIComponent("Aura AI Command demo request");
+  const message=`Name: ${payload.name}\nEmail: ${payload.email}\nCompany: ${payload.company}\n\nBrief:\n${payload.brief}`;
+  window.location.href=`mailto:${LEAD_EMAIL}?subject=${subject}&body=${encodeURIComponent(message)}`;
+  showToast("Email draft prepared");
+}
+</script>
+</body>
+</html>
